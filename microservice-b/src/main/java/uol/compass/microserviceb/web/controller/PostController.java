@@ -2,13 +2,18 @@ package uol.compass.microserviceb.web.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 
+import java.net.URI;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,6 +21,16 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostController {
     private final PostService service;
+  
+    @PostMapping
+    public ResponseEntity<Post> create(@RequestBody Post post){
+        Post createdPost = service.save(post);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequestUri().path("/{id}")
+                .buildAndExpand(createdPost.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(createdPost);
+    }
 
     @GetMapping
     public ResponseEntity<List<Post>> getAll(){
@@ -28,6 +43,5 @@ public class PostController {
         Post post = service.findById(id);
         return ResponseEntity.ok().body(post);
     }
-
 
 }
