@@ -46,4 +46,30 @@ public class PostService {
     public void deletePostById(String id) {
         repository.deleteById(id);
     }
+
+    @Transactional
+    public Post update(Post obj){
+        Post newObj = findById(obj.getId());
+        updateData(newObj, obj);
+        return repository.save(newObj);
+    }
+
+    @Transactional
+    public Post updateTitle(String id, String title) {
+        Post post = findById(id);
+        post.setTitle(title);
+        return repository.save(post);
+    }
+
+    @Transactional
+    public Post updateBody(String id, String body){
+        Post post = findById(id);
+        post.setBody(body);
+        return repository.save(post);
+    }
+
+    private void updateData(Post newObj, Post obj) {
+        newObj.setTitle(obj.getTitle());
+        newObj.setBody(obj.getBody());
+    }
 }
