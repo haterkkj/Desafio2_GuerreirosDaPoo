@@ -17,4 +17,10 @@ public class PostService {
     public List<Post> findAll() {
         return repository.findAll();
     }
+
+    public Post findById(String id) {
+        return repository.findById(id).orElseThrow(
+                () -> new RuntimeException("Postagem não encontrada.")
+        );
+    }
 }
