@@ -30,7 +30,7 @@ public class PostService {
     public Post save(Post post) {
         return repository.save(post);
     }
-  
+
     @Transactional(readOnly = true)
     public List<Post> findAll() {
         return repository.findAll();
@@ -39,7 +39,11 @@ public class PostService {
     @Transactional(readOnly = true)
     public Post findById(String id) {
         return repository.findById(id).orElseThrow(
-                () -> new RuntimeException("Postagem não encontrada.")
-        );
+                () -> new RuntimeException("Postagem não encontrada."));
+    }
+
+    @Transactional(readOnly = true)
+    public void deletePostById(String id) {
+        repository.deleteById(id);
     }
 }
