@@ -14,13 +14,20 @@ import java.util.List;
 public class PostService {
     private final PostRepository repository;
 
+    @Transactional
+    public Post save(Post post) {
+        return repository.save(post);
+    }
+  
     @Transactional(readOnly = true)
     public List<Post> findAll() {
         return repository.findAll();
     }
 
-    @Transactional
-    public Post save(Post post) {
-        return repository.save(post);
+    @Transactional(readOnly = true)
+    public Post findById(String id) {
+        return repository.findById(id).orElseThrow(
+                () -> new RuntimeException("Postagem não encontrada.")
+        );
     }
 }
