@@ -8,6 +8,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
+import uol.compass.microserviceb.web.dto.FetchedPostDTO;
+import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
+import uol.compass.microserviceb.web.dto.UpdatePostDTO;
+import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
 
 import java.net.URI;
 import java.util.List;
@@ -50,5 +54,25 @@ public class PostController {
     public ResponseEntity<String> deleteById(@PathVariable String id) {
         service.deletePostById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/all")
+    public ResponseEntity<Void> updateAll(@RequestBody UpdatePostDTO dto, @PathVariable String id) {
+        Post post = dto.toPost();
+        post.setId(id);
+        service.update(post);
+        return ResponseEntity.noContent().build(); //204
+    }
+
+    @PatchMapping("/{id}/title")
+    public ResponseEntity<Void> updateTitle(@PathVariable String id, @RequestBody UpdateTitleDTO dto) {
+        service.updateTitle(id, dto.getTitle());
+        return ResponseEntity.noContent().build(); //204
+    }
+
+    @PatchMapping("/{id}/body")
+    public ResponseEntity<Void> updateBody(@PathVariable String id, @RequestBody UpdateBodyDTO dto){
+        service.updateBody(id, dto.getBody());
+        return ResponseEntity.noContent().build(); //204
     }
 }
