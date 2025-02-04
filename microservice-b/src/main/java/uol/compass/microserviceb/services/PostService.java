@@ -1,10 +1,13 @@
 package uol.compass.microserviceb.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
+import uol.compass.microserviceb.web.dto.FetchedPostDTO;
 
 import java.util.List;
 
@@ -12,9 +15,35 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository repository;
+    private final PostClient postClient;
+
+    public List<Post> syncData() {
+        try {
+            List<Post> posts = postClient.getPosts().stream().map(FetchedPostDTO::toPost).toList();
+            return repository.saveAll(posts);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    public Post save(Post post) {
+        return repository.save(post);
+    }
 
     @Transactional(readOnly = true)
     public List<Post> findAll() {
         return repository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Post findById(String id) {
+        return repository.findById(id).orElseThrow(
+                () -> new RuntimeException("Postagem não encontrada."));
+    }
+
+    @Transactional(readOnly = true)
+    public void deletePostById(String id) {
+        repository.deleteById(id);
     }
 }
