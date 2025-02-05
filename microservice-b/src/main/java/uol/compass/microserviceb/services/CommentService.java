@@ -13,6 +13,7 @@ import uol.compass.microserviceb.repositories.CommentRepository;
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    @Transactional
     public Comment save(Comment comment) {
         try {
             return commentRepository.save(comment);
