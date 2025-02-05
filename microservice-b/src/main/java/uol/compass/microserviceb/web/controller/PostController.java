@@ -1,10 +1,14 @@
 package uol.compass.microserviceb.web.controller;
 
+
+import jakarta.validation.Valid;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -15,10 +19,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
-import uol.compass.microserviceb.web.dto.UpdatePostDTO;
-import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
+
+import uol.compass.microserviceb.web.dto.*;
+import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
+
 
 import java.net.URI;
 import java.util.List;
@@ -52,13 +57,15 @@ public class PostController {
             }
     )
     @PostMapping
-    public ResponseEntity<Post> create(@RequestBody Post post) {
-        Post createdPost = service.save(post);
+    public ResponseEntity<PostResponseDTO> create(@RequestBody @Valid PostCreateDTO post) {
+        Post createdPost = service.save(post.toPost());
+        PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri().path("/{id}")
                 .buildAndExpand(createdPost.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(createdPost);
+        return ResponseEntity.created(location).body(postResponse);
     }
 
     @Operation(
@@ -77,9 +84,11 @@ public class PostController {
     )
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAll() {
+    public ResponseEntity<List<PostResponseDTO>> getAll() {
         List<Post> listPost = service.findAll();
-        return ResponseEntity.ok().body(listPost);
+        List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
+
+        return ResponseEntity.ok().body(listPostResponse);
     }
 
     @Operation(
@@ -105,9 +114,11 @@ public class PostController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getById(@PathVariable String id) {
+    public ResponseEntity<PostResponseDTO> getById(@PathVariable String id) {
         Post post = service.findById(id);
-        return ResponseEntity.ok().body(post);
+        PostResponseDTO postResponse = PostMapper.fromPostToDto(post);
+
+        return ResponseEntity.ok().body(postResponse);
     }
 
     @Operation(summary = "Delete a post by its ID", description = "Deletes a post from the system based on the provided ID. If the post is not found, an exception is thrown.", parameters = {
@@ -118,7 +129,7 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "Invalid input, malformed ID format", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
         service.deletePostById(id);
         return ResponseEntity.noContent().build();
     }
