@@ -1,5 +1,6 @@
 package uol.compass.microserviceb.web.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class CommentController {
     private final PostService postService;
 
     @PostMapping(value = "/posts/{postId}/comments")
-    public ResponseEntity<Comment> create(@PathVariable String postId, @RequestBody CommentCreateDTO createdComment) {
+    public ResponseEntity<Comment> create(@PathVariable String postId, @Valid @RequestBody CommentCreateDTO createdComment) {
         Post relatedPost = postService.findById(postId);
         Comment comment = createdComment.toComment();
         comment.setPost(relatedPost);

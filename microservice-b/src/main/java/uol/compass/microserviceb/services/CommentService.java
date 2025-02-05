@@ -1,7 +1,6 @@
 package uol.compass.microserviceb.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
@@ -39,9 +38,7 @@ public class CommentService {
     @Transactional
     public Comment update(Comment updatedComment) {
         try {
-            Comment foundComment = findById(updatedComment.getId());
-            foundComment = updatedComment;
-            return commentRepository.save(foundComment);
+            return commentRepository.save(updatedComment);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Comment with ID " + updatedComment.getId() + " not found.");
         } catch (Exception e) {
@@ -50,7 +47,9 @@ public class CommentService {
     }
 
     public Comment findById(String id) {
-        return commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Comment with ID " + id + " not found."));
+        return commentRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Comment with ID " + id + " not found.")
+        );
     }
 
 }
