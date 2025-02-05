@@ -47,9 +47,6 @@ public class CommentController {
     public ResponseEntity<Comment> getCommentById(@PathVariable String postId, @PathVariable String commentId) {
         Post relatedPost = postService.findById(postId);
         Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
-        if (comment == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(comment);
     }
 
@@ -57,9 +54,7 @@ public class CommentController {
     public ResponseEntity<Void> deleteById(@PathVariable String postId, @PathVariable String commentId) {
         List<Comment> commentsInPost = postService.findById(postId).getComments();
         Comment comment = findCommentInPost(commentsInPost, commentId);
-        if (comment != null) {
-            commentService.deleteById(commentId);
-        }
+        commentService.deleteById(commentId);
         return ResponseEntity.noContent().build();
     }
 
@@ -67,9 +62,6 @@ public class CommentController {
     public ResponseEntity<Comment> update(@PathVariable String postId, @PathVariable String commentId, @RequestBody CommentUpdateDTO updatedComment) {
         List<Comment> commentsInPost = postService.findById(postId).getComments();
         Comment comment = findCommentInPost(commentsInPost, commentId);
-        if (comment == null) {
-            return ResponseEntity.notFound().build();
-        }
         comment.setName(updatedComment.getName());
         comment.setBody(updatedComment.getBody());
         comment = commentService.update(comment);
