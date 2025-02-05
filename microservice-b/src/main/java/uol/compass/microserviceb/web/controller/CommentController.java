@@ -16,7 +16,9 @@ import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.CommentService;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
+import uol.compass.microserviceb.web.dto.CommentResponseDTO;
 import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
+import uol.compass.microserviceb.web.dto.mapper.CommentMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
@@ -57,7 +59,7 @@ public class CommentController {
             }
     )
     @PostMapping(value = "/posts/{postId}/comments")
-    public ResponseEntity<Comment> create(
+    public ResponseEntity<CommentResponseDTO> create(
             @Parameter(description = "ID of the post to which the comment will be added", required = true)
             @PathVariable String postId,
             @Parameter(description = "Comment data to be created", required = true)
@@ -73,7 +75,9 @@ public class CommentController {
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(comment.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(comment);
+
+        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+        return ResponseEntity.created(location).body(commentResponse);
     }
 
     @Operation(
@@ -98,13 +102,15 @@ public class CommentController {
             }
     )
     @GetMapping(value = "/posts/{postId}/comments")
-    public ResponseEntity<List<Comment>> getAllComments(
+    public ResponseEntity<List<CommentResponseDTO>> getAllComments(
             @Parameter(description = "ID of the post whose comments should be retrieved", required = true)
             @PathVariable String postId
     ) {
         Post relatedPost = postService.findById(postId);
         List<Comment> commentsFromPost = relatedPost.getComments();
-        return ResponseEntity.ok(commentsFromPost);
+        List<CommentResponseDTO> commentsFromPostDto = CommentMapper.fromListCommentToListDto(commentsFromPost);
+
+        return ResponseEntity.ok(commentsFromPostDto);
     }
 
     @Operation(
@@ -129,7 +135,7 @@ public class CommentController {
             }
     )
     @GetMapping(value = "/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<Comment> getCommentById(
+    public ResponseEntity<CommentResponseDTO> getCommentById(
             @Parameter(description = "ID of the post containing the comment", required = true)
             @PathVariable String postId,
             @Parameter(description = "ID of the comment to retrieve", required = true)
@@ -137,7 +143,9 @@ public class CommentController {
     ) {
         Post relatedPost = postService.findById(postId);
         Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
-        return ResponseEntity.ok(comment);
+        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+
+        return ResponseEntity.ok(commentResponse);
     }
 
     @Operation(
@@ -195,7 +203,7 @@ public class CommentController {
             }
     )
     @PutMapping(value = "/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<Comment> update(
+    public ResponseEntity<CommentResponseDTO> update(
             @Parameter(description = "ID of the post containing the comment", required = true)
             @PathVariable String postId,
             @Parameter(description = "ID of the comment to update", required = true)
@@ -208,7 +216,9 @@ public class CommentController {
         comment.setName(updatedComment.getName());
         comment.setBody(updatedComment.getBody());
         comment = commentService.update(comment);
-        return ResponseEntity.ok().body(comment);
+
+        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+        return ResponseEntity.ok().body(commentResponse);
     }
 
     private Comment findCommentInPost(List<Comment> commentsInPost, String commentId) {
