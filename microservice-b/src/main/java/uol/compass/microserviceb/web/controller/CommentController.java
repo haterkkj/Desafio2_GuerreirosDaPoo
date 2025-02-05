@@ -12,6 +12,7 @@ import uol.compass.microserviceb.web.dto.CommentCreateDTO;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,6 +41,13 @@ public class CommentController {
         Post relatedPost = postService.findById(postId);
         List<Comment> commentsFromPost = relatedPost.getComments();
         return ResponseEntity.ok(commentsFromPost);
+    }
+
+    @GetMapping(value = "/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<Optional<Comment>> getCommentById(@PathVariable String postId, @PathVariable String commentId) {
+        Post relatedPost = postService.findById(postId);
+        Optional<Comment> comment = relatedPost.getComments().stream().filter(c -> c.getId().equals(commentId)).findFirst();
+        return ResponseEntity.ok(comment);
     }
 
     @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
