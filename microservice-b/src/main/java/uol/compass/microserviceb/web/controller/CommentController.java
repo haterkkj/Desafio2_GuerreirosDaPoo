@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class CommentController {
             @Parameter(description = "ID of the post to which the comment will be added", required = true)
             @PathVariable String postId,
             @Parameter(description = "Comment data to be created", required = true)
-            @RequestBody CommentCreateDTO createdComment
+            @Valid @RequestBody CommentCreateDTO createdComment
     ) {
         Post relatedPost = postService.findById(postId);
         Comment comment = createdComment.toComment();
