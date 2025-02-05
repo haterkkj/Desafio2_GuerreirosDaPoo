@@ -2,13 +2,10 @@ package uol.compass.microserviceb.web.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.FetchedPostDTO;
 import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
@@ -35,12 +32,6 @@ public class PostController {
     @GetMapping
     public ResponseEntity<List<Post>> getAll() {
         List<Post> listPost = service.findAll();
-        return ResponseEntity.ok().body(listPost);
-    }
-
-    @PostMapping("/sync")
-    public ResponseEntity<List<Post>> syncData() {
-        List<Post> listPost = service.syncData();
         return ResponseEntity.ok().body(listPost);
     }
 
