@@ -34,7 +34,11 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<Post> findAll() {
-        return repository.findAll();
+        try {
+            return repository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving posts: " + e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)
