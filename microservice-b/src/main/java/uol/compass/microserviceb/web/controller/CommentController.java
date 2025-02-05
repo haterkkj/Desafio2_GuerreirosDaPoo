@@ -41,4 +41,16 @@ public class CommentController {
         List<Comment> commentsFromPost = relatedPost.getComments();
         return ResponseEntity.ok(commentsFromPost);
     }
+
+    @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteById(@PathVariable String postId, @PathVariable String commentId) {
+        List<Comment> commentsInPost = postService.findById(postId).getComments();
+        for (Comment comment : commentsInPost) {
+            if (comment.getId().equals(commentId)) {
+                commentService.deleteById(commentId);
+                break;
+            }
+        }
+        return ResponseEntity.noContent().build();
+    }
 }
