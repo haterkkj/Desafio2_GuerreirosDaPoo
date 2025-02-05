@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.clients.PostClient;
+import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
@@ -39,7 +40,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public Post findById(String id) {
         return repository.findById(id).orElseThrow(
-                () -> new RuntimeException("Postagem não encontrada."));
+                () -> new EntityNotFoundException("Post Not Found."));
     }
 
     @Transactional(readOnly = true)
