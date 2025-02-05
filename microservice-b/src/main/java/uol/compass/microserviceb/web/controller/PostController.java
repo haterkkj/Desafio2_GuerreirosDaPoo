@@ -1,5 +1,10 @@
 package uol.compass.microserviceb.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +24,28 @@ import java.util.List;
 public class PostController {
     private final PostService service;
 
+    @Operation(
+            summary = "Create a new post",
+            description = "Endpoint to create a new post in the database.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be created.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Post.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Post successfully created.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Post.class)
+                            )
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<Post> create(@RequestBody Post post) {
         Post createdPost = service.save(post);
