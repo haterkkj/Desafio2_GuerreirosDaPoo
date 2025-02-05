@@ -1,9 +1,9 @@
 package uol.compass.microserviceb.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
@@ -43,13 +43,20 @@ public class PostService {
                 () -> new EntityNotFoundException("Post Not Found."));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void deletePostById(String id) {
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Post not found with ID: " + id);
+        }
+        try {
+            repository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting post: " + e.getMessage());
+        }
     }
 
     @Transactional
-    public Post update(Post obj){
+    public Post update(Post obj) {
         Post newObj = findById(obj.getId());
         updateData(newObj, obj);
         return repository.save(newObj);
@@ -63,7 +70,7 @@ public class PostService {
     }
 
     @Transactional
-    public Post updateBody(String id, String body){
+    public Post updateBody(String id, String body) {
         Post post = findById(id);
         post.setBody(body);
         return repository.save(post);
