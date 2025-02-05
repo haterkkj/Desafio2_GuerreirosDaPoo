@@ -56,6 +56,21 @@ public class PostController {
         return ResponseEntity.created(location).body(createdPost);
     }
 
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = Post.class))
+                            )
+                    )
+            }
+    )
+
     @GetMapping
     public ResponseEntity<List<Post>> getAll() {
         List<Post> listPost = service.findAll();
