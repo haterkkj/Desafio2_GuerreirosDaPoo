@@ -14,6 +14,7 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
+import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
 import java.util.List;
@@ -77,6 +78,28 @@ public class PostController {
         return ResponseEntity.ok().body(listPost);
     }
 
+    @Operation(
+            summary = "Retrieve a post by ID",
+            description = "Endpoint to retrieve a specific post from the database by its unique identifier.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Post.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Post not found.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<Post> getById(@PathVariable String id) {
         Post post = service.findById(id);
