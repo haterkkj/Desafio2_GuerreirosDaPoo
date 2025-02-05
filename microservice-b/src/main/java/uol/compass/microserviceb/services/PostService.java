@@ -29,7 +29,11 @@ public class PostService {
 
     @Transactional
     public Post save(Post post) {
-        return repository.save(post);
+        try {
+            return repository.save(post);
+        } catch (Exception e) {
+            throw new RuntimeException("Error saving post: " + e.getMessage());
+        }
     }
 
     @Transactional(readOnly = true)
