@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
+import uol.compass.microserviceb.web.dto.PostResponseDTO;
 import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
+import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 
 import java.net.URI;
 import java.util.List;
@@ -20,29 +22,35 @@ public class PostController {
     private final PostService service;
 
     @PostMapping
-    public ResponseEntity<Post> create(@RequestBody Post post) {
+    public ResponseEntity<PostResponseDTO> create(@RequestBody Post post) {
         Post createdPost = service.save(post);
+        PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequestUri().path("/{id}")
                 .buildAndExpand(createdPost.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(createdPost);
+        return ResponseEntity.created(location).body(postResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getAll() {
+    public ResponseEntity<List<PostResponseDTO>> getAll() {
         List<Post> listPost = service.findAll();
-        return ResponseEntity.ok().body(listPost);
+        List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
+
+        return ResponseEntity.ok().body(listPostResponse);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getById(@PathVariable String id) {
+    public ResponseEntity<PostResponseDTO> getById(@PathVariable String id) {
         Post post = service.findById(id);
-        return ResponseEntity.ok().body(post);
+        PostResponseDTO postResponse = PostMapper.fromPostToDto(post);
+
+        return ResponseEntity.ok().body(postResponse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable String id) {
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
         service.deletePostById(id);
         return ResponseEntity.noContent().build();
     }
