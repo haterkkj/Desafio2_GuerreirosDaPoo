@@ -1,5 +1,6 @@
 package uol.compass.microserviceb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -11,7 +12,8 @@ public class Comment {
     @Id
     private String id;
     @DBRef
-    private String postId;
+    @JsonIgnore
+    private Post post;
     @NonNull
     private String email;
     @NonNull
