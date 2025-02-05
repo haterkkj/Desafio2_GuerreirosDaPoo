@@ -40,7 +40,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public Post findById(String id) {
         return repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Post Not Found."));
+                () -> new EntityNotFoundException("Post not found with ID: " + id));
     }
 
     @Transactional
