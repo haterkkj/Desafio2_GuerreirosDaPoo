@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.repositories.CommentRepository;
-update import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
 
 @RequiredArgsConstructor
 @Service
