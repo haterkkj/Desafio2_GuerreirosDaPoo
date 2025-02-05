@@ -11,6 +11,7 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
 
 import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,5 +33,12 @@ public class CommentController {
                 .buildAndExpand(comment.getId())
                 .toUri();
         return ResponseEntity.created(location).body(comment);
+    }
+
+    @GetMapping(value = "/posts/{postId}/comments")
+    public ResponseEntity<List<Comment>> getAllComments(@PathVariable String postId) {
+        Post relatedPost = postService.findById(postId);
+        List<Comment> commentsFromPost = relatedPost.getComments();
+        return ResponseEntity.ok(commentsFromPost);
     }
 }
