@@ -13,7 +13,6 @@ import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
