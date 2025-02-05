@@ -16,8 +16,6 @@ public class CommentService {
     public Comment save(Comment comment) {
         try {
             return commentRepository.save(comment);
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("The comment could not be saved due to database constraints.", e);
         } catch (Exception e) {
             throw new RuntimeException("Unexpected error occurred while saving the comment.", e);
         }
