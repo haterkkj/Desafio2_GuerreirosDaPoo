@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Post;
 
-@Getter @Setter
+@Getter
+@Setter
 public class FetchedPostDTO {
     private long id;
     private long userId;
