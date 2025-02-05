@@ -1,15 +1,13 @@
 package uol.compass.microserviceb.web.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.PostResponseDTO;
-import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
-import uol.compass.microserviceb.web.dto.UpdatePostDTO;
-import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
+import uol.compass.microserviceb.web.dto.*;
 import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 
 import java.net.URI;
@@ -22,8 +20,8 @@ public class PostController {
     private final PostService service;
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> create(@RequestBody Post post) {
-        Post createdPost = service.save(post);
+    public ResponseEntity<PostResponseDTO> create(@RequestBody @Valid PostCreateDTO post) {
+        Post createdPost = service.save(post.toPost());
         PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
 
         URI location = ServletUriComponentsBuilder
