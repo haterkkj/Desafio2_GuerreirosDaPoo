@@ -19,4 +19,19 @@ public class CommentService {
     public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
+
+    @Transactional
+    public Comment update(Comment updatedComment) {
+        Comment foundComment = findById(updatedComment.getId());
+        if (foundComment == null) {
+            return null;
+        }
+        foundComment = updatedComment;
+        return commentRepository.save(foundComment);
+    }
+
+    public Comment findById(String id) {
+        return commentRepository.findById(id).orElse(null);
+    }
+
 }

@@ -9,10 +9,10 @@ import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.CommentService;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
+import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -44,21 +44,44 @@ public class CommentController {
     }
 
     @GetMapping(value = "/posts/{postId}/comments/{commentId}")
-    public ResponseEntity<Optional<Comment>> getCommentById(@PathVariable String postId, @PathVariable String commentId) {
+    public ResponseEntity<Comment> getCommentById(@PathVariable String postId, @PathVariable String commentId) {
         Post relatedPost = postService.findById(postId);
-        Optional<Comment> comment = relatedPost.getComments().stream().filter(c -> c.getId().equals(commentId)).findFirst();
+        Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
+        if (comment == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(comment);
     }
 
     @DeleteMapping(value = "/posts/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteById(@PathVariable String postId, @PathVariable String commentId) {
         List<Comment> commentsInPost = postService.findById(postId).getComments();
-        for (Comment comment : commentsInPost) {
-            if (comment.getId().equals(commentId)) {
-                commentService.deleteById(commentId);
-                break;
-            }
+        Comment comment = findCommentInPost(commentsInPost, commentId);
+        if (comment != null) {
+            commentService.deleteById(commentId);
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<Comment> update(@PathVariable String postId, @PathVariable String commentId, @RequestBody CommentUpdateDTO updatedComment) {
+        List<Comment> commentsInPost = postService.findById(postId).getComments();
+        Comment comment = findCommentInPost(commentsInPost, commentId);
+        if (comment == null) {
+            return ResponseEntity.notFound().build();
+        }
+        comment.setName(updatedComment.getName());
+        comment.setBody(updatedComment.getBody());
+        comment = commentService.update(comment);
+        return ResponseEntity.ok().body(comment);
+    }
+
+    private Comment findCommentInPost(List<Comment> commentsInPost, String commentId) {
+        for (Comment comment : commentsInPost) {
+            if (comment.getId().equals(commentId)) {
+                return comment;
+            }
+        }
+        return null;
     }
 }
