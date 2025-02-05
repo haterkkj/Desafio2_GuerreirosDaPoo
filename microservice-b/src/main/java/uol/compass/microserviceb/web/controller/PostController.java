@@ -1,5 +1,10 @@
 package uol.compass.microserviceb.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 
 import org.springdoc.api.ErrorMessage;
@@ -18,6 +23,7 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
+import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
 import java.util.List;
@@ -28,6 +34,28 @@ import java.util.List;
 public class PostController {
     private final PostService service;
 
+    @Operation(
+            summary = "Create a new post",
+            description = "Endpoint to create a new post in the database.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be created.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Post.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Post successfully created.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Post.class)
+                            )
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<Post> create(@RequestBody Post post) {
         Post createdPost = service.save(post);
@@ -38,12 +66,49 @@ public class PostController {
         return ResponseEntity.created(location).body(createdPost);
     }
 
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = Post.class))
+                            )
+                    )
+            }
+    )
+
     @GetMapping
     public ResponseEntity<List<Post>> getAll() {
         List<Post> listPost = service.findAll();
         return ResponseEntity.ok().body(listPost);
     }
 
+    @Operation(
+            summary = "Retrieve a post by ID",
+            description = "Endpoint to retrieve a specific post from the database by its unique identifier.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Post.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Post not found.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<Post> getById(@PathVariable String id) {
         Post post = service.findById(id);
