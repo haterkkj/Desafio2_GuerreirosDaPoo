@@ -40,7 +40,7 @@ public class CommentServiceTests {
         comment.setPost(post);
     }
     @Test
-    void shouldSaveCommentSuccessfully() {
+    void should_Save_Comment_Successfully() {
         when(commentRepository.save(comment)).thenReturn(comment);
 
         Comment savedComment = commentService.save(comment);
@@ -51,7 +51,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenSavingFails() {
+    void should_ThrowException_When_Saving_Fails() {
         when(commentRepository.save(comment)).thenThrow(new RuntimeException("Database error"));
 
         Exception exception = assertThrows(RuntimeException.class, () -> commentService.save(comment));
@@ -61,7 +61,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldFindCommentById() {
+    void should_Find_CommentById() {
         when(commentRepository.findById("123")).thenReturn(Optional.of(comment));
 
         Comment foundComment = commentService.findById("123");
@@ -72,7 +72,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenCommentNotFound() {
+    void should_ThrowException_When_Comment_Not_Found() {
         when(commentRepository.findById("999")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> commentService.findById("999"));
@@ -80,7 +80,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldDeleteCommentById() {
+    void should_Delete_Comment_ById() {
         when(commentRepository.existsById("123")).thenReturn(true);
         doNothing().when(commentRepository).deleteById("123");
 
@@ -90,7 +90,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenDeletingNonExistentComment() {
+    void should_ThrowException_When_Deleting_No_Existent_Comment() {
         when(commentRepository.existsById("999")).thenReturn(false);
 
         assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("999"));
@@ -98,7 +98,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldUpdateCommentSuccessfully() {
+    void should_Update_Comment_Successfully() {
         when(commentRepository.save(comment)).thenReturn(comment);
 
         Comment updatedComment = commentService.update(comment);
@@ -109,7 +109,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenUpdateFails() {
+    void should_ThrowException_When_Update_Fails() {
         when(commentRepository.save(comment)).thenThrow(new RuntimeException("Update error"));
 
         assertThrows(RuntimeException.class, () -> commentService.update(comment));
@@ -117,7 +117,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    public void commentService_ShouldGetCommentById_ReturnSuccess() {
+    public void commentService_Should_GetCommentById_Return_Success() {
         when(commentRepository.findById("1")).thenReturn(Optional.of(comment));
 
         Comment foundCommentById = commentService.findById("1");
