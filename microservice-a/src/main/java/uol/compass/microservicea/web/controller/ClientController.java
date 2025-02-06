@@ -18,7 +18,10 @@ public class ClientController {
     private final CommentService service;
 
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<CommentResponseDTO> createComment(@PathVariable String postId, @RequestBody CommentCreateDTO comment) {
+    public ResponseEntity<CommentResponseDTO> createComment(
+            @PathVariable String postId,
+            @RequestBody CommentCreateDTO comment
+    ) {
         Comment createdComment = service.createCommentInPost(postId, comment);
         CommentResponseDTO response = CommentMapper.fromCommentToDto(createdComment);
 
@@ -26,7 +29,9 @@ public class ClientController {
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDTO>> getPosts(@PathVariable String postId) {
+    public ResponseEntity<List<CommentResponseDTO>> getPosts(
+            @PathVariable String postId
+    ) {
         List<Comment> comments = service.getCommentsByPostId(postId);
         List<CommentResponseDTO> response = CommentMapper.fromListCommentToListDto(comments);
 
@@ -37,7 +42,8 @@ public class ClientController {
     public ResponseEntity<CommentResponseDTO> createComment(
             @PathVariable String postId,
             @PathVariable String commentId,
-            @RequestBody CommentCreateDTO comment) {
+            @RequestBody CommentCreateDTO comment
+    ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentMapper.fromCommentToDto(updatedComment);
 
@@ -47,7 +53,8 @@ public class ClientController {
     @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<Void> createComment(
             @PathVariable String postId,
-            @PathVariable String commentId) {
+            @PathVariable String commentId
+    ) {
         service.deleteCommentInPost(postId, commentId);
 
         return ResponseEntity.noContent().build();
