@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
+import uol.compass.microservicea.web.dto.PostCreateDTO;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class PostService {
 
     public Post getPostById(String id) {
         return postClient.getPostById(id);
+    }
+
+    public Post createPost(PostCreateDTO postCreateDTO) {
+        return postClient.createPost(postCreateDTO);
     }
 
 }
