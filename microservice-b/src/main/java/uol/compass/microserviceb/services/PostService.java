@@ -9,7 +9,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
-import uol.compass.microserviceb.web.dto.UpdatePostDTO;
+import uol.compass.microserviceb.web.dto.PostUpdateDTO;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class PostService {
         }
     }
 
-    public Post updatePost(String id, UpdatePostDTO dto) {
+    public Post updatePost(String id, PostUpdateDTO dto) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
         }
