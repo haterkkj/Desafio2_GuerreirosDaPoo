@@ -133,6 +133,23 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Update a post", description = "Resource to partially update an existing post.",
+            parameters = { @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the post to be updated",
+                    required = true)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Post updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    )
+            })
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO dto) {
         service.updatePost(id, dto);
