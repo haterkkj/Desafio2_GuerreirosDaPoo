@@ -9,6 +9,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
+import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
@@ -87,5 +88,18 @@ public class PostService {
     private void updateData(Post newObj, Post obj) {
         newObj.setTitle(obj.getTitle());
         newObj.setBody(obj.getBody());
+    }
+
+    public void updatePost(String id, UpdatePostDTO dto) {
+        Post post = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post não encontrado"));
+
+        if (dto.getTitle() != null) {
+            post.setTitle(dto.getTitle());
+        }
+        if (dto.getBody() != null) {
+            post.setBody(dto.getBody());
+        }
+
+        repository.save(post);
     }
 }

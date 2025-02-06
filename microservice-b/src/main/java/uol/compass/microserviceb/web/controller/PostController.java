@@ -15,9 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.UpdateBodyDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
-import uol.compass.microserviceb.web.dto.UpdateTitleDTO;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
@@ -123,23 +121,9 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/all")
-    public ResponseEntity<Void> updateAll(@RequestBody UpdatePostDTO dto, @PathVariable String id) {
-        Post post = dto.toPost();
-        post.setId(id);
-        service.update(post);
-        return ResponseEntity.noContent().build(); // 204
-    }
-
-    @PatchMapping("/{id}/title")
-    public ResponseEntity<Void> updateTitle(@PathVariable String id, @RequestBody UpdateTitleDTO dto) {
-        service.updateTitle(id, dto.getTitle());
-        return ResponseEntity.noContent().build(); // 204
-    }
-
-    @PatchMapping("/{id}/body")
-    public ResponseEntity<Void> updateBody(@PathVariable String id, @RequestBody UpdateBodyDTO dto) {
-        service.updateBody(id, dto.getBody());
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO dto) {
+        service.updatePost(id, dto);
         return ResponseEntity.noContent().build(); // 204
     }
 }
