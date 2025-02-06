@@ -18,6 +18,7 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
 import uol.compass.microserviceb.web.dto.CommentResponseDTO;
 import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
+import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.mapper.CommentMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
@@ -35,11 +36,19 @@ public class CommentController {
     @Operation(
             summary = "Create a new comment",
             description = "Adds a comment to an existing post identified by `postId`. The created comment is returned in the response.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Comment data to be created.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommentCreateDTO.class)
+                    )
+            ),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Comment successfully created",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "400",
@@ -49,6 +58,11 @@ public class CommentController {
                     @ApiResponse(
                             responseCode = "404",
                             description = "Not Found - Post ID does not exist",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(
@@ -87,7 +101,7 @@ public class CommentController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "List of comments successfully retrieved",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -193,6 +207,11 @@ public class CommentController {
                     @ApiResponse(
                             responseCode = "404",
                             description = "Not Found - The post or comment does not exist",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(

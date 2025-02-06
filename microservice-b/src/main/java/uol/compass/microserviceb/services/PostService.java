@@ -80,7 +80,7 @@ public class PostService {
         }
     }
 
-    public void updatePost(String id, UpdatePostDTO dto) {
+    public Post updatePost(String id, UpdatePostDTO dto) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
         }
@@ -98,7 +98,7 @@ public class PostService {
         }
 
         try {
-            repository.save(post);
+            return repository.save(post);
         } catch (Exception e) {
             throw new RuntimeException("Error updating post: " + e.getMessage());
         }
