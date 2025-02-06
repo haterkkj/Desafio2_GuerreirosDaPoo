@@ -89,7 +89,7 @@ public class PostController {
                             description = "Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
                             )
                     )
             }
