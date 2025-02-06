@@ -25,4 +25,8 @@ public class PostService {
         return postClient.createPost(postCreateDTO);
     }
 
+    public void deletePost(String id) {
+        postClient.deletePost(id);
+    }
+
 }
