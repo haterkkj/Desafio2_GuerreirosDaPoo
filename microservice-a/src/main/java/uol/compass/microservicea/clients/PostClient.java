@@ -8,7 +8,7 @@ import uol.compass.microservicea.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
-@FeignClient(value = "post-client", url = "https://jsonplaceholder.typicode.com/")
+@FeignClient(value = "post-client", url = "https://localhost:8081/")
 public interface PostClient {
 
     @GetMapping("/posts")
