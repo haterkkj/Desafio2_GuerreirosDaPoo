@@ -116,34 +116,18 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).save(comment);
     }
 
+    @Test
+    public void commentService_ShouldGetCommentById_ReturnSuccess() {
+        when(commentRepository.findById("1")).thenReturn(Optional.of(comment));
 
+        Comment foundCommentById = commentService.findById("1");
 
+        assertNotNull(foundCommentById);
+        assertEquals("email@test.com", foundCommentById.getEmail());
+        assertEquals("Test Name", foundCommentById.getName());
+        assertEquals("Test Body", foundCommentById.getBody());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        verify(commentRepository, times(1)).findById("1");
+    }
 
 }
