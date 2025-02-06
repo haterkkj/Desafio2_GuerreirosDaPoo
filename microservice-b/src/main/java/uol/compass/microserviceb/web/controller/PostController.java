@@ -18,7 +18,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.*;

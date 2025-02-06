@@ -12,8 +12,11 @@ public class CommentCreateDTO {
     @NotBlank
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email must be valid")
     private String email;
+
     @NotBlank
+    @Size(min = 2, max = 180)
     private String name;
+
     @NotBlank
     @Size(min = 3, max = 2080)
     private String body;
