@@ -1,0 +1,19 @@
+package uol.compass.microservicea.services;
+
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import uol.compass.microservicea.clients.PostClient;
+import uol.compass.microservicea.model.Post;
+
+import java.util.List;
+
+@AllArgsConstructor
+@Service
+public class PostService {
+    private final PostClient postClient;
+
+    public List<Post> getPosts() {
+        return postClient.getPosts();
+    }
+
+}
