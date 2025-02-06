@@ -29,7 +29,7 @@ public class CommentServiceTests {
     @BeforeEach
     void setUp() {
         Post post = new Post();
-        post.setId("post123");
+        post.setId("123456");
         post.setTitle("Title test");
         post.setBody("Body Test");
 
@@ -87,6 +87,13 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).deleteById("123");
     }
 
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistentComment() {
+        when(commentRepository.existsById("999")).thenReturn(false);
+
+        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("999"));
+        verify(commentRepository, never()).deleteById("999");
+    }
 
 
 
