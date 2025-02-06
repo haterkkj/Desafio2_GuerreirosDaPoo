@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.CommentClient;
 import uol.compass.microservicea.model.Comment;
+import uol.compass.microservicea.web.dto.CommentCreateDTO;
 
 import java.util.List;
 
@@ -11,6 +12,10 @@ import java.util.List;
 @Service
 public class CommentService {
     private final CommentClient client;
+
+    public Comment createCommentInPost(String postId, CommentCreateDTO comment) {
+        return client.createCommentInPost(postId, comment);
+    }
 
     public List<Comment> getCommentsByPostId(String postId) {
         return client.getCommentsByPostId(postId);
