@@ -1,10 +1,7 @@
 package uol.compass.microservicea.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 
@@ -19,4 +16,6 @@ public interface CommentClient {
     @GetMapping("/{postId}/comments")
     List<Comment> getCommentsByPostId(@PathVariable("postId") String postId);
 
+    @PutMapping("/{postId}/comments/{commentId}")
+    Comment updateCommentInPost(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId, @RequestBody CommentCreateDTO comment);
 }

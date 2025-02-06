@@ -21,4 +21,7 @@ public class CommentService {
         return client.getCommentsByPostId(postId);
     }
 
+    public Comment updateCommentInPost(String postId, String commentId, CommentCreateDTO comment) {
+        return client.updateCommentInPost(postId, commentId, comment);
+    }
 }

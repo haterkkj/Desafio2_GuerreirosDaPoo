@@ -33,4 +33,15 @@ public class ClientController {
         return ResponseEntity.ok().body(response);
     }
 
+    @PutMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponseDTO> createComment(
+            @PathVariable String postId,
+            @PathVariable String commentId,
+            @RequestBody CommentCreateDTO comment) {
+        Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
+        CommentResponseDTO response = CommentMapper.fromCommentToDto(updatedComment);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }
