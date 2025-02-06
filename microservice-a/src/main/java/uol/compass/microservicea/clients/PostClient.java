@@ -15,15 +15,15 @@ public interface PostClient {
     List<Post> getPosts();
 
     @GetMapping("/posts/{id}")
-    Post getPostById(@PathVariable("id") Long id);
+    Post getPostById(@PathVariable("id") String id);
 
     @PostMapping("/posts")
     Post createPost(@RequestBody PostCreateDTO postCreateDTO);
 
     @PutMapping("/posts/{id}")
-    Post updatePost(@PathVariable("id") Long id, @RequestBody UpdatePostDTO updatePostDTO);
+    Post updatePost(@PathVariable("id") String id, @RequestBody UpdatePostDTO updatePostDTO);
 
     @DeleteMapping("/posts/{id}")
-    void deletePost(@PathVariable("id") Long id);
+    void deletePost(@PathVariable("id") String id);
 
 }
