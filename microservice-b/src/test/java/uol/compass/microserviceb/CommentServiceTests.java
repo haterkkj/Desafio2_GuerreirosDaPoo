@@ -12,6 +12,8 @@ import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.services.CommentService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,6 +107,15 @@ public class CommentServiceTests {
         assertEquals("123", updatedComment.getId());
         verify(commentRepository, times(1)).save(comment);
     }
+
+    @Test
+    void shouldThrowExceptionWhenUpdateFails() {
+        when(commentRepository.save(comment)).thenThrow(new RuntimeException("Update error"));
+
+        assertThrows(RuntimeException.class, () -> commentService.update(comment));
+        verify(commentRepository, times(1)).save(comment);
+    }
+
 
 
 
