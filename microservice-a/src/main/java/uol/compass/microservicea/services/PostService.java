@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
+import uol.compass.microservicea.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
@@ -27,6 +28,10 @@ public class PostService {
 
     public void deletePost(String id) {
         postClient.deletePost(id);
+    }
+
+    public Post updatePost(String id, UpdatePostDTO updatePostDTO) {
+        return postClient.updatePost(id, updatePostDTO);
     }
 
 }
