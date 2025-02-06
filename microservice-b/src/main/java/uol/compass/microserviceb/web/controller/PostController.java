@@ -133,7 +133,7 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Update a post", description = "Resource to partially update an existing post.",
+    @Operation(summary = "Update a post by ID", description = "Resource to partially update an existing post.",
             parameters = { @Parameter(in = ParameterIn.PATH, name = "id", description = "ID of the post to be updated",
                     required = true)
             },
