@@ -16,4 +16,8 @@ public class PostService {
         return postClient.getPosts();
     }
 
+    public Post getPostById(String id) {
+        return postClient.getPostById(id);
+    }
+
 }
