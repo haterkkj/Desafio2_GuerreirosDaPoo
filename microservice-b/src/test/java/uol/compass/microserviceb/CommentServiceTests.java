@@ -95,6 +95,17 @@ public class CommentServiceTests {
         verify(commentRepository, never()).deleteById("999");
     }
 
+    @Test
+    void shouldUpdateCommentSuccessfully() {
+        when(commentRepository.save(comment)).thenReturn(comment);
+
+        Comment updatedComment = commentService.update(comment);
+
+        assertNotNull(updatedComment);
+        assertEquals("123", updatedComment.getId());
+        verify(commentRepository, times(1)).save(comment);
+    }
+
 
 
 
