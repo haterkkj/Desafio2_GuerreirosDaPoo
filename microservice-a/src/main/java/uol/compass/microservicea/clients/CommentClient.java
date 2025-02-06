@@ -4,7 +4,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import uol.compass.microservicea.model.Comment;
-import uol.compass.microservicea.web.dto.FetchedCommentDTO;
 
 import java.util.List;
 
@@ -12,6 +11,6 @@ import java.util.List;
 public interface CommentClient {
 
     @GetMapping("/{postId}/comments")
-    List<Comment> getComments(@PathVariable("postId") String postId);
+    List<Comment> getCommentsByPostId(@PathVariable("postId") String postId);
 
 }
