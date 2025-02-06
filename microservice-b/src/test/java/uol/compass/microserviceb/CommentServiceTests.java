@@ -45,6 +45,16 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).save(comment);
     }
 
+    @Test
+    void shouldThrowExceptionWhenSavingFails() {
+        when(commentRepository.save(comment)).thenThrow(new RuntimeException("Database error"));
+
+        Exception exception = assertThrows(RuntimeException.class, () -> commentService.save(comment));
+
+        assertEquals("Unexpected error occurred while saving the comment.", exception.getMessage());
+        verify(commentRepository, times(1)).save(comment);
+    }
+
 
 
 
