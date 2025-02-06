@@ -3,12 +3,14 @@ package uol.compass.microservicea.web.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.services.CommentService;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 import uol.compass.microservicea.web.dto.CommentResponseDTO;
 import uol.compass.microservicea.web.dto.mapper.CommentMapper;
 
+import java.net.URI;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,7 +27,12 @@ public class ClientController {
         Comment createdComment = service.createCommentInPost(postId, comment);
         CommentResponseDTO response = CommentMapper.fromCommentToDto(createdComment);
 
-        return ResponseEntity.ok().body(response);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(createdComment.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping("/{postId}/comments")

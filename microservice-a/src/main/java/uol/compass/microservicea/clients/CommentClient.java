@@ -12,7 +12,7 @@ public interface CommentClient {
 
     @PostMapping("/{postId}/comments")
     Comment createCommentInPost(
-            @PathVariable("postId") String postId, 
+            @PathVariable("postId") String postId,
             @RequestBody CommentCreateDTO comment
     );
 
