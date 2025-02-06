@@ -24,4 +24,8 @@ public class CommentService {
     public Comment updateCommentInPost(String postId, String commentId, CommentCreateDTO comment) {
         return client.updateCommentInPost(postId, commentId, comment);
     }
+
+    public Void deleteCommentInPost(String postId, String commentId) {
+        return client.deleteCommentInPost(postId, commentId);
+    }
 }
