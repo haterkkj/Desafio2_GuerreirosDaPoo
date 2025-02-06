@@ -1,11 +1,8 @@
 package uol.compass.microservicea.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter @RequiredArgsConstructor @NoArgsConstructor
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Post {
     private String id;
     private String title;

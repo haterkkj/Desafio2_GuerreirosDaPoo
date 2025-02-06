@@ -8,22 +8,22 @@ import uol.compass.microservicea.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
-@FeignClient(value = "post-client", url = "https://localhost:8081/")
+@FeignClient(value = "post-client", url = "http://localhost:8081/")
 public interface PostClient {
 
     @GetMapping("/posts")
     List<Post> getPosts();
 
     @GetMapping("/posts/{id}")
-    Post getPostById(@PathVariable("id") Long id);
+    Post getPostById(@PathVariable("id") String id);
 
     @PostMapping("/posts")
     Post createPost(@RequestBody PostCreateDTO postCreateDTO);
 
     @PutMapping("/posts/{id}")
-    Post updatePost(@PathVariable("id") Long id, @RequestBody UpdatePostDTO updatePostDTO);
+    Post updatePost(@PathVariable("id") String id, @RequestBody UpdatePostDTO updatePostDTO);
 
     @DeleteMapping("/posts/{id}")
-    void deletePost(@PathVariable("id") Long id);
+    void deletePost(@PathVariable("id") String id);
 
 }
