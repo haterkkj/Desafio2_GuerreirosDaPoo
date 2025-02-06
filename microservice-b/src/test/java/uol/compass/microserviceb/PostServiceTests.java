@@ -3,11 +3,15 @@ package uol.compass.microserviceb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -68,6 +72,43 @@ public class PostServiceTests {
         assertThrows(IllegalArgumentException.class, () -> postService.save(null));
 
         verify(postRepository, times(0)).save(any(Post.class));
+    }
+
+    @Test
+    public void postService_ShouldGetAllPosts_ReturnSuccess() {
+        List<Post> mockPosts = new ArrayList<>();
+
+        mockPosts.add(new Post("Tittle number 1", "Body number 1"));
+        mockPosts.add(new Post("Tittle number 2", "Body number 2"));
+
+        when(postRepository.findAll()).thenReturn(mockPosts);
+
+        List<Post> posts = postService.findAll();
+
+        assertNotNull(posts);
+        assertEquals(2, posts.size());
+
+        assertEquals("Tittle number 1", posts.get(0).getTitle());
+        assertEquals("Tittle number 2", posts.get(1).getTitle());
+
+        assertEquals("Body number 1", posts.get(0).getBody());
+        assertEquals("Body number 2", posts.get(1).getBody());
+
+        verify(postRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void postService_ShouldGetAllPosts_ReturnEmpty() {
+
+        when(postRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<Post> posts = postService.findAll();
+
+        assertNotNull(posts);
+        assertTrue(posts.isEmpty());
+
+        verify(postRepository, times(1)).findAll();
+
     }
 
     @Test
