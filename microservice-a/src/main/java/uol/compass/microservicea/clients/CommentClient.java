@@ -11,14 +11,26 @@ import java.util.List;
 public interface CommentClient {
 
     @PostMapping("/{postId}/comments")
-    Comment createCommentInPost(@PathVariable("postId") String postId, @RequestBody CommentCreateDTO comment);
+    Comment createCommentInPost(
+            @PathVariable("postId") String postId, 
+            @RequestBody CommentCreateDTO comment
+    );
 
     @GetMapping("/{postId}/comments")
-    List<Comment> getCommentsByPostId(@PathVariable("postId") String postId);
+    List<Comment> getCommentsByPostId(
+            @PathVariable("postId") String postId
+    );
 
     @PutMapping("/{postId}/comments/{commentId}")
-    Comment updateCommentInPost(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId, @RequestBody CommentCreateDTO comment);
+    Comment updateCommentInPost(
+            @PathVariable("postId") String postId,
+            @PathVariable("commentId") String commentId,
+            @RequestBody CommentCreateDTO comment
+    );
 
     @DeleteMapping("/{postId}/comments/{commentId}")
-    Void deleteCommentInPost(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId);
+    Void deleteCommentInPost(
+            @PathVariable("postId") String postId,
+            @PathVariable("commentId") String commentId
+    );
 }
