@@ -9,6 +9,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
+import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
@@ -65,27 +66,48 @@ public class PostService {
 
     @Transactional
     public Post update(Post obj) {
+        if (obj == null || obj.getId() == null) {
+            throw new IllegalArgumentException("Object or ID cannot be null");
+        }
+
         Post newObj = findById(obj.getId());
         updateData(newObj, obj);
-        return repository.save(newObj);
+
+        try {
+            return repository.save(newObj);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating post: " + e.getMessage());
+        }
     }
 
-    @Transactional
-    public Post updateTitle(String id, String title) {
-        Post post = findById(id);
-        post.setTitle(title);
-        return repository.save(post);
-    }
+    public void updatePost(String id, UpdatePostDTO dto) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Post ID cannot be null or empty");
+        }
+        if ((dto.getTitle() == null || dto.getTitle().isBlank()) &&
+                (dto.getBody() == null || dto.getBody().isBlank())) {
+            throw new IllegalArgumentException("At least one field must be updated");
+        }
+        Post post = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
+            post.setTitle(dto.getTitle());
+        }
+        if (dto.getBody() != null && !dto.getBody().isBlank()) {
+            post.setBody(dto.getBody());
+        }
 
-    @Transactional
-    public Post updateBody(String id, String body) {
-        Post post = findById(id);
-        post.setBody(body);
-        return repository.save(post);
+        try {
+            repository.save(post);
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating post: " + e.getMessage());
+        }
+
     }
 
     private void updateData(Post newObj, Post obj) {
         newObj.setTitle(obj.getTitle());
         newObj.setBody(obj.getBody());
     }
+
 }
