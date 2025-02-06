@@ -1,6 +1,7 @@
 package uol.compass.microserviceb.web.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,6 +28,7 @@ import uol.compass.microserviceb.web.exception.ErrorMessage;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Posts", description = "Endpoints for managing posts")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/posts")
