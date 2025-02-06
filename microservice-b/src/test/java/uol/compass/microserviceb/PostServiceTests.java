@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -173,6 +174,22 @@ public class PostServiceTests {
 
         assertThrows(EntityNotFoundException.class, () -> postService.updatePost("1", dto));
         verify(postRepository, times(0)).save(any(Post.class));
+    }
+
+    @Test
+    void postService_ShouldDeletePost_ReturnSuccess() {
+        when(postRepository.existsById("1")).thenReturn(true);
+        doNothing().when(postRepository).deleteById("1");
+
+        postService.deletePostById("1");
+
+        verify(postRepository, times(1)).deleteById("1");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistentPost() {
+        when(postRepository.existsById("99")).thenReturn(false);
+        assertThrows(EntityNotFoundException.class, () -> postService.deletePostById("99"));
     }
 
 }
