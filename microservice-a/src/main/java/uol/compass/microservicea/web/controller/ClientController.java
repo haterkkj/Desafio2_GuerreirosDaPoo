@@ -44,4 +44,13 @@ public class ClientController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Void> createComment(
+            @PathVariable String postId,
+            @PathVariable String commentId) {
+        service.deleteCommentInPost(postId, commentId);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
