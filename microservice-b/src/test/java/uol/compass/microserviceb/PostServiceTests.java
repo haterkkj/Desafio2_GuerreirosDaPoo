@@ -2,12 +2,13 @@ package uol.compass.microserviceb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import uol.compass.microserviceb.clients.PostClient;
+import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.services.PostService;
@@ -44,7 +46,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void postService_ShouldcreateSuccessfully() {
+    public void postService_Shouldcreate_ReturnSuccess() {
         when(postRepository.save(any(Post.class))).thenReturn(mockPost);
         Post savedPost = postService.save(mockPost);
         assertNotNull(savedPost);
@@ -54,7 +56,7 @@ public class PostServiceTests {
     }
 
     @Test
-    void postService_ShoultNotSave_WhenRepositoryFails() {
+    void postService_ShouldNotSave_WhenRepositoryFails() {
         when(postRepository.save(any(Post.class))).thenThrow(new RuntimeException("Save failed"));
 
         assertThrows(RuntimeException.class, () -> postService.save(mockPost));
@@ -62,10 +64,26 @@ public class PostServiceTests {
     }
 
     @Test
-    public void postService_ShouldNotCreateSuccessfully() {
-        Post savedPost = postService.save(null);
-        assertNull(savedPost);
+    public void postService_ShouldThrowException_WhenPostIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> postService.save(null));
+
         verify(postRepository, times(0)).save(any(Post.class));
+    }
+
+    @Test
+    public void postService_ShouldGetPostById_ReturnSuccess() {
+        when(postRepository.findById("1")).thenReturn(Optional.of(mockPost));
+        Post foundPostById = postService.findById("1");
+        assertNotNull(foundPostById);
+
+        assertEquals("Test for tittle", foundPostById.getTitle());
+        assertEquals("Test for body", foundPostById.getBody());
+    }
+
+    @Test
+    public void postService_ShouldNotGetPostById_ReturnEmpty() {
+        when(postRepository.findById("99")).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> postService.findById("99"));
     }
 
 }
