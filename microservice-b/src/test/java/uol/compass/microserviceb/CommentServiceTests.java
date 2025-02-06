@@ -130,4 +130,36 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).findById("1");
     }
 
+    //Não sei se seguiu o padrão pedido
+    @Test
+    public void commentService_ShouldGetCommentsByPostId_ReturnSuccess() {
+        Post post = new Post();
+        post.setId("post123");
+        post.setTitle("Test Post");
+        post.setBody("Post Body");
+
+        List<Comment> mockComments = new ArrayList<>();
+        mockComments.add(new Comment("email1@test.com", "User 1", "Comment body 1"));
+        mockComments.add(new Comment("email2@test.com", "User 2", "Comment body 2"));
+
+        mockComments.forEach(comment -> comment.setPost(post));
+
+        when(commentRepository.findByPostId("post123")).thenReturn(mockComments);
+
+        List<Comment> comments = commentService.findByPostId("post123");
+
+        assertNotNull(comments);
+        assertEquals(2, comments.size());
+
+        assertEquals("email1@test.com", comments.get(0).getEmail());
+        assertEquals("User 1", comments.get(0).getName());
+        assertEquals("Comment body 1", comments.get(0).getBody());
+
+        assertEquals("email2@test.com", comments.get(1).getEmail());
+        assertEquals("User 2", comments.get(1).getName());
+        assertEquals("Comment body 2", comments.get(1).getBody());
+
+        verify(commentRepository, times(1)).findByPostId("post123");
+    }
+
 }
