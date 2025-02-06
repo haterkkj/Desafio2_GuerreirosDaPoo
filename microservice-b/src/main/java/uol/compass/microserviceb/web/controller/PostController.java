@@ -1,6 +1,7 @@
 package uol.compass.microserviceb.web.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.*;
@@ -27,6 +29,7 @@ import uol.compass.microserviceb.web.exception.ErrorMessage;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Posts", description = "Endpoints for managing posts")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/posts")
@@ -41,7 +44,7 @@ public class PostController {
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = Post.class)
+                            schema = @Schema(implementation = PostCreateDTO.class)
                     )
             ),
             responses = {
@@ -50,9 +53,19 @@ public class PostController {
                             description = "Post successfully created.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = Post.class)
+                                    schema = @Schema(implementation = PostResponseDTO.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Invalid input data",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
             }
     )
     @PostMapping
@@ -76,7 +89,7 @@ public class PostController {
                             description = "Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = Post.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
                             )
                     )
             }
@@ -124,8 +137,16 @@ public class PostController {
             @Parameter(name = "id", description = "ID of the post to be deleted", required = true, in = ParameterIn.PATH)
     }, responses = {
             @ApiResponse(responseCode = "204", description = "Post deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "Post not found with the provided ID", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input, malformed ID format", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+            @ApiResponse(responseCode = "404", description = "Post not found with the provided ID",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid input, malformed ID format",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            ),
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
@@ -138,7 +159,11 @@ public class PostController {
                     required = true)
             },
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Post updated successfully"),
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post updated successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
+                    ),
                     @ApiResponse(responseCode = "404", description = "Post not found",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)
@@ -148,11 +173,18 @@ public class PostController {
                             content = @Content(mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
-    @PatchMapping("/{id}")
-    public ResponseEntity<Void> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO dto) {
-        service.updatePost(id, dto);
-        return ResponseEntity.noContent().build(); // 204
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO dto) {
+        Post post = service.updatePost(id, dto);
+        PostResponseDTO response = PostMapper.fromPostToDto(post);
+
+        return ResponseEntity.ok().body(response);
     }
 }
