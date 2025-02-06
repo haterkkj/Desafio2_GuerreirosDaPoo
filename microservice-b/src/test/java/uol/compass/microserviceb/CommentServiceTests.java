@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
@@ -68,6 +69,23 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).findById("123");
     }
 
+    @Test
+    void shouldThrowExceptionWhenCommentNotFound() {
+        when(commentRepository.findById("999")).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> commentService.findById("999"));
+        verify(commentRepository, times(1)).findById("999");
+    }
+
+    @Test
+    void shouldDeleteCommentById() {
+        when(commentRepository.existsById("123")).thenReturn(true);
+        doNothing().when(commentRepository).deleteById("123");
+
+        commentService.deleteById("123");
+
+        verify(commentRepository, times(1)).deleteById("123");
+    }
 
 
 
