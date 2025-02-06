@@ -11,6 +11,8 @@ import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.services.CommentService;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,6 +57,16 @@ public class CommentServiceTests {
         verify(commentRepository, times(1)).save(comment);
     }
 
+    @Test
+    void shouldFindCommentById() {
+        when(commentRepository.findById("123")).thenReturn(Optional.of(comment));
+
+        Comment foundComment = commentService.findById("123");
+
+        assertNotNull(foundComment);
+        assertEquals("123", foundComment.getId());
+        verify(commentRepository, times(1)).findById("123");
+    }
 
 
 
