@@ -101,7 +101,7 @@ public class CommentController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "List of comments successfully retrieved",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
