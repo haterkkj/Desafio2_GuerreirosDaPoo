@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/posts")
-public class ClientController {
+public class CommentController {
     private final CommentService service;
 
     @PostMapping("/{postId}/comments")
