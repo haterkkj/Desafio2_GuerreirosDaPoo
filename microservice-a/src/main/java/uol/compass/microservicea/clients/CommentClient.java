@@ -18,4 +18,7 @@ public interface CommentClient {
 
     @PutMapping("/{postId}/comments/{commentId}")
     Comment updateCommentInPost(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId, @RequestBody CommentCreateDTO comment);
+
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    Void deleteCommentInPost(@PathVariable("postId") String postId, @PathVariable("commentId") String commentId);
 }
