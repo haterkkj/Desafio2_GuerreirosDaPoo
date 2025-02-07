@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.config.FeignConfig;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
+import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface CommentClient {
     Comment updateCommentInPost(
             @PathVariable("postId") String postId,
             @PathVariable("commentId") String commentId,
-            @RequestBody CommentCreateDTO comment
+            @RequestBody CommentUpdateDTO comment
     );
 
     @DeleteMapping("/{postId}/comments/{commentId}")

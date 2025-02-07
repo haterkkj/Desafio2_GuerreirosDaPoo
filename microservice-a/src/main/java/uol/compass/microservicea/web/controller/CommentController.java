@@ -8,6 +8,7 @@ import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.services.CommentService;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 import uol.compass.microservicea.web.dto.CommentResponseDTO;
+import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 import uol.compass.microservicea.web.dto.mapper.CommentMapper;
 
 import java.net.URI;
@@ -46,10 +47,10 @@ public class CommentController {
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentResponseDTO> createComment(
+    public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable String postId,
             @PathVariable String commentId,
-            @RequestBody CommentCreateDTO comment
+            @RequestBody CommentUpdateDTO comment
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentMapper.fromCommentToDto(updatedComment);
@@ -58,7 +59,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<Void> createComment(
+    public ResponseEntity<Void> deleteComment(
             @PathVariable String postId,
             @PathVariable String commentId
     ) {

@@ -72,7 +72,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
         if (method.equals("POST")) {
             if(path.contains("/comments")) {
-                bindingResult = new BeanPropertyBindingResult(new CommentCreateDTO(null, null, null, null), "requestBody");
+                bindingResult = new BeanPropertyBindingResult(new CommentCreateDTO(null, null, null), "requestBody");
             } else {
                 bindingResult = new BeanPropertyBindingResult(new PostCreateDTO(), "requestBody");
             }

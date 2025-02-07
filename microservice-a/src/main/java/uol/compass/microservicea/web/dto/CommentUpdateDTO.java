@@ -7,8 +7,8 @@ import uol.compass.microservicea.model.Comment;
 
 @AllArgsConstructor
 @Getter @Setter
-public class CommentCreateDTO {
-    private String email;
+public class CommentUpdateDTO {
     private String name;
     private String body;
+
 }
