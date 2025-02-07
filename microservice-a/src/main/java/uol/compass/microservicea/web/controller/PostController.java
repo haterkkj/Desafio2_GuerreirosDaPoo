@@ -13,8 +13,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
+import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
-import uol.compass.microservicea.web.dto.UpdatePostDTO;
 import uol.compass.microservicea.web.dto.mapper.PostMapper;
 
 import java.net.URI;
@@ -180,11 +180,10 @@ public class PostController {
                     )
             })
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
-        Post updatedPost = postService.updatePost(id, updatePostDTO);
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO postUpdateDTO) {
+        Post updatedPost = postService.updatePost(id, postUpdateDTO);
         PostResponseDTO updatedPostDto = PostMapper.fromPostToDto(updatedPost);
-
         return ResponseEntity.ok().body(updatedPostDto);
-    }
 
+    }
 }
