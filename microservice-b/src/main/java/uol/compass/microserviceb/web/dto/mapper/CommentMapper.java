@@ -7,12 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommentMapper {
-    public static CommentResponseDTO fromCommentToDto(Comment comment) {
-        return new CommentResponseDTO(comment.getId(), comment.getEmail(), comment.getName(), comment.getBody());
-    }
-
-    public static List<CommentResponseDTO> fromListCommentToListDto(List<Comment> posts) {
-        return posts.stream().map(CommentMapper::fromCommentToDto).collect(Collectors.toList());
+    public static List<CommentResponseDTO> fromListCommentToListDto(List<Comment> comments) {
+        return comments.stream().map(CommentResponseDTO::toDto).collect(Collectors.toList());
     }
 }
 

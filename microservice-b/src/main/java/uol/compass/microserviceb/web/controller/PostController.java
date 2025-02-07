@@ -72,7 +72,7 @@ public class PostController {
             @RequestBody @Valid PostCreateDTO post
     ) {
         Post createdPost = service.save(post.toPost());
-        PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
+        PostResponseDTO postResponse = PostResponseDTO.toDTO(createdPost);
 
                 URI location = ServletUriComponentsBuilder
                                 .fromCurrentRequestUri().path("/{id}")
@@ -121,7 +121,7 @@ public class PostController {
             @PathVariable String id
     ) {
         Post post = service.findById(id);
-        PostResponseDTO postResponse = PostMapper.fromPostToDto(post);
+        PostResponseDTO postResponse = PostResponseDTO.toDTO(post);
 
         return ResponseEntity.ok().body(postResponse);
     }
@@ -191,7 +191,7 @@ public class PostController {
             @RequestBody PostUpdateDTO dto
     ) {
         Post post = service.updatePost(id, dto);
-        PostResponseDTO response = PostMapper.fromPostToDto(post);
+        PostResponseDTO response = PostResponseDTO.toDTO(post);
 
                 return ResponseEntity.ok().body(response);
         }
