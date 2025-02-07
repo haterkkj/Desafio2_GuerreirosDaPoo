@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.*;

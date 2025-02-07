@@ -10,11 +10,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
+import uol.compass.microservicea.web.dto.mapper.PostMapper;
 import uol.compass.microservicea.web.exception.ErrorMessage;
 
 import java.net.URI;
@@ -43,7 +45,8 @@ public class PostController {
     )
     @GetMapping
     public ResponseEntity<List<PostResponseDTO>> getPosts() {
-        List<PostResponseDTO> postsDto = postService.getPosts().stream().map(PostResponseDTO::toDto).toList();
+        List<Post> posts = postService.getPosts();
+        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
         return ResponseEntity.ok().body(postsDto);
     }
 
