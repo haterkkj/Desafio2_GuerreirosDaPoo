@@ -7,7 +7,6 @@ import lombok.Setter;
 import uol.compass.microserviceb.model.Post;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
