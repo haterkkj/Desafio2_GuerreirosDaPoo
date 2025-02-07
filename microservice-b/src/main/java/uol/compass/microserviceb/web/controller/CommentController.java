@@ -18,7 +18,6 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
 import uol.compass.microserviceb.web.dto.CommentResponseDTO;
 import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
-import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.mapper.CommentMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
@@ -90,7 +89,7 @@ public class CommentController {
                 .buildAndExpand(comment.getId())
                 .toUri();
 
-        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+        CommentResponseDTO commentResponse = CommentResponseDTO.toDto(comment);
         return ResponseEntity.created(location).body(commentResponse);
     }
 
@@ -157,7 +156,7 @@ public class CommentController {
     ) {
         Post relatedPost = postService.findById(postId);
         Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
-        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+        CommentResponseDTO commentResponse = CommentResponseDTO.toDto(comment);
 
         return ResponseEntity.ok(commentResponse);
     }
@@ -236,7 +235,7 @@ public class CommentController {
         comment.setBody(updatedComment.getBody());
         comment = commentService.update(comment);
 
-        CommentResponseDTO commentResponse = CommentMapper.fromCommentToDto(comment);
+        CommentResponseDTO commentResponse = CommentResponseDTO.toDto(comment);
         return ResponseEntity.ok().body(commentResponse);
     }
 

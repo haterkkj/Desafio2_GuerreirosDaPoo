@@ -26,7 +26,7 @@ public class CommentController {
             @RequestBody CommentCreateDTO comment
     ) {
         Comment createdComment = service.createCommentInPost(postId, comment);
-        CommentResponseDTO response = CommentMapper.fromCommentToDto(createdComment);
+        CommentResponseDTO response = CommentResponseDTO.toDto(createdComment);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -53,7 +53,7 @@ public class CommentController {
             @RequestBody CommentUpdateDTO comment
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
-        CommentResponseDTO response = CommentMapper.fromCommentToDto(updatedComment);
+        CommentResponseDTO response = CommentResponseDTO.toDto(updatedComment);
 
         return ResponseEntity.ok().body(response);
     }
