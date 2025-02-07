@@ -7,6 +7,8 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.repositories.CommentRepository;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class CommentService {
@@ -52,4 +54,7 @@ public class CommentService {
         );
     }
 
+    public List<Comment> findByPostId(String postId) {
+        return commentRepository.findByPostId(postId);
+    }
 }
