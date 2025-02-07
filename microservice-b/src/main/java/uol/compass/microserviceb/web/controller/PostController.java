@@ -1,6 +1,5 @@
 package uol.compass.microserviceb.web.controller;
 
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,7 +24,6 @@ import uol.compass.microserviceb.web.dto.*;
 import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
-
 import java.net.URI;
 import java.util.List;
 
@@ -33,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-    private final PostService service;
+        private final PostService service;
 
     @Operation(
             summary = "Create a new post",
@@ -75,35 +74,24 @@ public class PostController {
         Post createdPost = service.save(post.toPost());
         PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(createdPost.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(postResponse);
-    }
+                URI location = ServletUriComponentsBuilder
+                                .fromCurrentRequestUri().path("/{id}")
+                                .buildAndExpand(createdPost.getId())
+                                .toUri();
+                return ResponseEntity.created(location).body(postResponse);
+        }
 
-    @Operation(
-            summary = "List all posts",
-            description = "Endpoint to retrieve all posts from the database.",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Posts successfully retrieved.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
-                            )
-                    )
-            }
-    )
+        @Operation(summary = "List all posts", description = "Endpoint to retrieve all posts from the database.", responses = {
+                        @ApiResponse(responseCode = "200", description = "Posts successfully retrieved.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))))
+        })
 
-    @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getAll() {
-        List<Post> listPost = service.findAll();
-        List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
+        @GetMapping
+        public ResponseEntity<List<PostResponseDTO>> getAll() {
+                List<Post> listPost = service.findAll();
+                List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
 
-        return ResponseEntity.ok().body(listPostResponse);
-    }
+                return ResponseEntity.ok().body(listPostResponse);
+        }
 
     @Operation(
             summary = "Retrieve a post by ID",
@@ -205,6 +193,7 @@ public class PostController {
         Post post = service.updatePost(id, dto);
         PostResponseDTO response = PostMapper.fromPostToDto(post);
 
-        return ResponseEntity.ok().body(response);
-    }
+                return ResponseEntity.ok().body(response);
+        }
+
 }
