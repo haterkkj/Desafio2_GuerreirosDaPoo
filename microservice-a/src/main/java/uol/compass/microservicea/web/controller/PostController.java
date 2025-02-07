@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
@@ -11,6 +12,7 @@ import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.UpdatePostDTO;
 import uol.compass.microservicea.web.dto.mapper.PostMapper;
 
+import java.net.URI;
 import java.util.List;
 
 @Tag(name = "Posts", description = "Endpoints for managing posts.")
@@ -41,7 +43,12 @@ public class PostController {
         Post newPost = postService.createPost(postCreateDTO);
         PostResponseDTO newPostDto = PostMapper.fromPostToDto(newPost);
 
-        return ResponseEntity.ok().body(newPostDto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(newPost.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(newPostDto);
     }
 
     @DeleteMapping("/{id}")
