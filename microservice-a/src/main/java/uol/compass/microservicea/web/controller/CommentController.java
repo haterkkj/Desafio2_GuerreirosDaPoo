@@ -46,7 +46,7 @@ public class CommentController {
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentResponseDTO> createComment(
+    public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable String postId,
             @PathVariable String commentId,
             @RequestBody CommentCreateDTO comment
@@ -58,7 +58,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<Void> createComment(
+    public ResponseEntity<Void> deleteComment(
             @PathVariable String postId,
             @PathVariable String commentId
     ) {
