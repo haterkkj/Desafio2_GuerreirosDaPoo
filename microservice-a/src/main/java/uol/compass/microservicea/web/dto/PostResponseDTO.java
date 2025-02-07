@@ -21,6 +21,6 @@ public class PostResponseDTO {
 
     public static PostResponseDTO toDto(Post post) {
         List<CommentResponseDTO> comments = CommentMapper.fromListCommentToListDto(post.getComments());
-        return new PostResponseDTO(post.getId(), post.getTitle(), post.getTitle(), comments);
+        return new PostResponseDTO(post.getId(), post.getTitle(), post.getBody(), comments);
     }
 }
