@@ -49,6 +49,28 @@ public class PostController {
         return ResponseEntity.ok().body(postsDto);
     }
 
+    @Operation(
+            summary = "Retrieve a post by ID",
+            description = "Endpoint to retrieve a specific post from the database by its unique identifier consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PostResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Post not found.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    ),
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
         Post post = postService.getPostById(id);
