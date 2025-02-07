@@ -58,9 +58,11 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
+    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
         Post updatedPost = postService.updatePost(id, updatePostDTO);
-        return ResponseEntity.ok().body(updatedPost);
+        PostResponseDTO updatedPostDto = PostMapper.fromPostToDto(updatedPost);
+
+        return ResponseEntity.ok().body(updatedPostDto);
     }
 
 }
