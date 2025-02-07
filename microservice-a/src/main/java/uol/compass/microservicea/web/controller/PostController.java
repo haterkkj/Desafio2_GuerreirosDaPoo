@@ -1,5 +1,9 @@
 package uol.compass.microservicea.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,38 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
+    @Operation(
+            summary = "Create a new post",
+            description = "Endpoint to create a new post in the database consuming Micro Service B.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be created.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PostCreateDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Post successfully created.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PostResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Invalid input data",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                    )
+            }
+    )
     @GetMapping
     public ResponseEntity<List<PostResponseDTO>> getPosts() {
         List<Post> posts = postService.getPosts();
