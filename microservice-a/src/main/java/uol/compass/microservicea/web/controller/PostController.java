@@ -1,6 +1,7 @@
 package uol.compass.microservicea.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +26,36 @@ import java.util.List;
 @RequestMapping(value = "/api/posts")
 public class PostController {
     private final PostService postService;
+
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
+                            )
+                    )
+            }
+    )
+    @GetMapping
+    public ResponseEntity<List<PostResponseDTO>> getPosts() {
+        List<Post> posts = postService.getPosts();
+        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
+
+        return ResponseEntity.ok().body(postsDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
+        Post post = postService.getPostById(id);
+        PostResponseDTO postDto = PostMapper.fromPostToDto(post);
+
+        return ResponseEntity.ok().body(postDto);
+    }
 
     @Operation(
             summary = "Create a new post",
@@ -58,22 +89,6 @@ public class PostController {
                     )
             }
     )
-    @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getPosts() {
-        List<Post> posts = postService.getPosts();
-        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
-
-        return ResponseEntity.ok().body(postsDto);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
-        Post post = postService.getPostById(id);
-        PostResponseDTO postDto = PostMapper.fromPostToDto(post);
-
-        return ResponseEntity.ok().body(postDto);
-    }
-
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
         Post newPost = postService.createPost(postCreateDTO);
