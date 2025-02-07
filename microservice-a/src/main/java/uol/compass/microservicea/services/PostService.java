@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
-import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
 import java.util.List;
