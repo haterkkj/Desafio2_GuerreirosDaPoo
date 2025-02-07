@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
+import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.UpdatePostDTO;
+import uol.compass.microservicea.web.dto.mapper.PostMapper;
 
 import java.util.List;
 
@@ -19,9 +21,11 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<Post>> getPosts() {
+    public ResponseEntity<List<PostResponseDTO>> getPosts() {
         List<Post> posts = postService.getPosts();
-        return ResponseEntity.ok().body(posts);
+        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
+
+        return ResponseEntity.ok().body(postsDto);
     }
 
     @GetMapping("/{id}")
