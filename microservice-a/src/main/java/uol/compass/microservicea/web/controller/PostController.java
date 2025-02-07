@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
-import uol.compass.microservicea.web.dto.UpdatePostDTO;
+import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
 import java.util.List;
 
@@ -43,8 +43,8 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
-        Post updatedPost = postService.updatePost(id, updatePostDTO);
+    public ResponseEntity<Post> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO postUpdateDTO) {
+        Post updatedPost = postService.updatePost(id, postUpdateDTO);
         return ResponseEntity.ok().body(updatedPost);
     }
 

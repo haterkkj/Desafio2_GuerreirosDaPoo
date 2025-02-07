@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.config.FeignConfig;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
-import uol.compass.microservicea.web.dto.UpdatePostDTO;
+import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface PostClient {
     Post createPost(@RequestBody PostCreateDTO postCreateDTO);
 
     @PutMapping("/posts/{id}")
-    Post updatePost(@PathVariable("id") String id, @RequestBody UpdatePostDTO updatePostDTO);
+    Post updatePost(@PathVariable("id") String id, @RequestBody PostUpdateDTO postUpdateDTO);
 
     @DeleteMapping("/posts/{id}")
     void deletePost(@PathVariable("id") String id);
