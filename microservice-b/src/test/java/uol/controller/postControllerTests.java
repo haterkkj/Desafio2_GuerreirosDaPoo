@@ -35,7 +35,7 @@ import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.controller.PostController;
 import uol.compass.microserviceb.web.dto.PostCreateDTO;
-import uol.compass.microserviceb.web.dto.UpdatePostDTO;
+import uol.compass.microserviceb.web.dto.PostUpdateDTO;
 
 @ExtendWith(MockitoExtension.class)
 public class postControllerTests {
@@ -120,7 +120,7 @@ public class postControllerTests {
 
     @Test
     public void postController_ShouldUpdatePost_ReturnSuccess() throws Exception {
-        UpdatePostDTO updatePostDTO = new UpdatePostDTO();
+        PostUpdateDTO updatePostDTO = new PostUpdateDTO();
         updatePostDTO.setTitle("Updated Title");
         updatePostDTO.setBody("Updated Body");
 
@@ -129,7 +129,7 @@ public class postControllerTests {
         updatedPost.setTitle("Updated Title");
         updatedPost.setBody("Updated Body");
 
-        when(postService.updatePost(eq("1"), any(UpdatePostDTO.class))).thenReturn(updatedPost);
+        when(postService.updatePost(eq("1"), any(PostUpdateDTO.class))).thenReturn(updatedPost);
 
         mockMvc.perform(put("/posts/1")
                 .contentType(MediaType.APPLICATION_JSON)

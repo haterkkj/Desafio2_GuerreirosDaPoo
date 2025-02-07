@@ -102,7 +102,7 @@ public class PostController {
                         @ApiResponse(responseCode = "422", description = "Unprocessable Entity - Invalid Arguments", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
         })
         @PutMapping("/{id}")
-        public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO dto) {
+        public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO dto) {
                 Post post = service.updatePost(id, dto);
                 PostResponseDTO response = PostMapper.fromPostToDto(post);
 

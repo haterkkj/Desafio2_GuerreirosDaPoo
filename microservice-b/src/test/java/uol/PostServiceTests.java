@@ -28,7 +28,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.UpdatePostDTO;
+import uol.compass.microserviceb.web.dto.PostUpdateDTO;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceTests {
@@ -135,7 +135,7 @@ public class PostServiceTests {
 
     @Test
     public void postService_ShouldUpdatePostWithDTO_WhenValidDTO() {
-        UpdatePostDTO dto = new UpdatePostDTO("New title to test", "New body to test");
+        PostUpdateDTO dto = new PostUpdateDTO("New title to test", "New body to test");
         Post existingPost = new Post("Old title to test", "Old body to test");
 
         when(postRepository.findById("1")).thenReturn(Optional.of(existingPost));
@@ -151,7 +151,7 @@ public class PostServiceTests {
 
     @Test
     public void postService_ShouldThrowException_WhenPostIdIsBlank() {
-        UpdatePostDTO dto = new UpdatePostDTO("New title to test", "New body to test");
+        PostUpdateDTO dto = new PostUpdateDTO("New title to test", "New body to test");
 
         assertThrows(IllegalArgumentException.class, () -> postService.updatePost("", dto));
         verify(postRepository, times(0)).save(any(Post.class));
@@ -159,7 +159,7 @@ public class PostServiceTests {
 
     @Test
     public void postService_ShouldThrowException_WhenNoFieldsToUpdate() {
-        UpdatePostDTO dto = new UpdatePostDTO(null, null);
+        PostUpdateDTO dto = new PostUpdateDTO(null, null);
 
         assertThrows(IllegalArgumentException.class, () -> postService.updatePost("1", dto));
         verify(postRepository, times(0)).save(any(Post.class));
@@ -167,7 +167,7 @@ public class PostServiceTests {
 
     @Test
     public void postService_ShouldThrowException_WhenPostNotFoundById() {
-        UpdatePostDTO dto = new UpdatePostDTO("New title to test", "New body to test");
+        PostUpdateDTO dto = new PostUpdateDTO("New title to test", "New body to test");
 
         when(postRepository.findById("1")).thenReturn(Optional.empty());
 
