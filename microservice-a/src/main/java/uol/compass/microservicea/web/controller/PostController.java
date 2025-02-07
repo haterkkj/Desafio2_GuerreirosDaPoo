@@ -1,5 +1,10 @@
 package uol.compass.microservicea.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +20,27 @@ import uol.compass.microservicea.web.dto.mapper.PostMapper;
 import java.net.URI;
 import java.util.List;
 
-@Tag(name = "Posts", description = "Endpoints for managing posts.")
+@Tag(name = "Posts", description = "Endpoints for managing posts consuming Micro Service B.")
 @AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/posts")
 public class PostController {
     private final PostService postService;
 
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
+                            )
+                    )
+            }
+    )
     @GetMapping
     public ResponseEntity<List<PostResponseDTO>> getPosts() {
         List<Post> posts = postService.getPosts();
@@ -30,6 +49,28 @@ public class PostController {
         return ResponseEntity.ok().body(postsDto);
     }
 
+    @Operation(
+            summary = "Retrieve a post by ID",
+            description = "Endpoint to retrieve a specific post from the database by its unique identifier consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PostResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Post not found.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    ),
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
         Post post = postService.getPostById(id);
@@ -38,6 +79,38 @@ public class PostController {
         return ResponseEntity.ok().body(postDto);
     }
 
+    @Operation(
+            summary = "Create a new post",
+            description = "Endpoint to create a new post in the database consuming Micro Service B.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be created.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PostCreateDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Post successfully created.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = PostResponseDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Invalid input data",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                    )
+            }
+    )
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
         Post newPost = postService.createPost(postCreateDTO);
@@ -51,12 +124,61 @@ public class PostController {
         return ResponseEntity.created(location).body(newPostDto);
     }
 
+    @Operation(summary = "Delete a post by its ID",
+            description = "Deletes a post from the system based on the provided ID consuming Micro Service B. If the post is not found, an exception is thrown.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Post deleted successfully"
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not Found - Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    )
+            })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable String id ) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Update a post by ID", description = "Resource to partially update an existing post consuming Micro Service B.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be updated.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PostCreateDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post updated successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))
+                    )
+            })
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
         Post updatedPost = postService.updatePost(id, updatePostDTO);
