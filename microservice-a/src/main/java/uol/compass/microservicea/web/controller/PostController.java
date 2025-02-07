@@ -13,9 +13,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
-import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
-import uol.compass.microservicea.web.dto.mapper.PostMapper;
+import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.exception.ErrorMessage;
 
 import java.net.URI;
@@ -44,9 +43,7 @@ public class PostController {
     )
     @GetMapping
     public ResponseEntity<List<PostResponseDTO>> getPosts() {
-        List<Post> posts = postService.getPosts();
-        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
-
+        List<PostResponseDTO> postsDto = postService.getPosts().stream().map(PostResponseDTO::toDto).toList();
         return ResponseEntity.ok().body(postsDto);
     }
 
@@ -75,7 +72,7 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
         Post post = postService.getPostById(id);
-        PostResponseDTO postDto = PostMapper.fromPostToDto(post);
+        PostResponseDTO postDto = PostResponseDTO.toDto(post);
 
         return ResponseEntity.ok().body(postDto);
     }
@@ -115,7 +112,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
         Post newPost = postService.createPost(postCreateDTO);
-        PostResponseDTO newPostDto = PostMapper.fromPostToDto(newPost);
+        PostResponseDTO newPostDto = PostResponseDTO.toDto(newPost);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -183,7 +180,7 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO postUpdateDTO) {
         Post updatedPost = postService.updatePost(id, postUpdateDTO);
-        PostResponseDTO updatedPostDto = PostMapper.fromPostToDto(updatedPost);
+        PostResponseDTO updatedPostDto = PostResponseDTO.toDto(updatedPost);
         return ResponseEntity.ok().body(updatedPostDto);
 
     }
