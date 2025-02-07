@@ -16,7 +16,8 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> entityNotFoundException(EntityNotFoundException ex,
+            HttpServletRequest request) {
         log.error("Api error - ", ex);
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -25,29 +26,29 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> methodArgumentNotValidException(MethodArgumentNotValidException ex,
-                                                                        HttpServletRequest request,
-                                                                        BindingResult result) {
-        log.error("Api Error - ", ex);
+            HttpServletRequest request) {
+        log.error("Validation error - ", ex);
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid Fields,", result));
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Invalid Fields",
+                        ex.getBindingResult()));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorMessage> runtimeException(RuntimeException ex, HttpServletRequest request) {
-        log.error("Api error - ", ex);
+        log.error("Unexpected error - ", ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorMessage> illegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
-        log.error("Validation error- ", ex);
+    public ResponseEntity<ErrorMessage> illegalArgumentException(IllegalArgumentException ex,
+            HttpServletRequest request) {
+        log.error("Validation error - ", ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
-
 }
