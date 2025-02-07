@@ -13,9 +13,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
-import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
+import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.dto.mapper.PostMapper;
+import uol.compass.microservicea.web.exception.ErrorMessage;
 
 import java.net.URI;
 import java.util.List;
@@ -45,7 +46,6 @@ public class PostController {
     public ResponseEntity<List<PostResponseDTO>> getPosts() {
         List<Post> posts = postService.getPosts();
         List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
-
         return ResponseEntity.ok().body(postsDto);
     }
 
@@ -66,7 +66,7 @@ public class PostController {
                             description = "Post not found.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                                    schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
             }
@@ -74,7 +74,7 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
         Post post = postService.getPostById(id);
-        PostResponseDTO postDto = PostMapper.fromPostToDto(post);
+        PostResponseDTO postDto = PostResponseDTO.toDto(post);
 
         return ResponseEntity.ok().body(postDto);
     }
@@ -102,19 +102,19 @@ public class PostController {
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request - Invalid input data",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class)) // Temporário, alterar para ErrorMessage depois.
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
     )
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
         Post newPost = postService.createPost(postCreateDTO);
-        PostResponseDTO newPostDto = PostMapper.fromPostToDto(newPost);
+        PostResponseDTO newPostDto = PostResponseDTO.toDto(newPost);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
@@ -133,12 +133,12 @@ public class PostController {
                     ),
                     @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                                    schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
                     @ApiResponse(responseCode = "404", description = "Not Found - Post not found",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                                    schema = @Schema(implementation = ErrorMessage.class)
                             )
                     )
             })
@@ -165,24 +165,24 @@ public class PostController {
                     ),
                     @ApiResponse(responseCode = "404", description = "Post not found",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = Object.class)
+                                    schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
                     @ApiResponse(responseCode = "400", description = "Invalid data for update",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = Object.class)
+                                    schema = @Schema(implementation = ErrorMessage.class)
                             )
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO postUpdateDTO) {
         Post updatedPost = postService.updatePost(id, postUpdateDTO);
-        PostResponseDTO updatedPostDto = PostMapper.fromPostToDto(updatedPost);
+        PostResponseDTO updatedPostDto = PostResponseDTO.toDto(updatedPost);
         return ResponseEntity.ok().body(updatedPostDto);
 
     }

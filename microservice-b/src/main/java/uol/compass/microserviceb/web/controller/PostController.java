@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import lombok.AllArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.*;
@@ -72,7 +70,7 @@ public class PostController {
             @RequestBody @Valid PostCreateDTO post
     ) {
         Post createdPost = service.save(post.toPost());
-        PostResponseDTO postResponse = PostMapper.fromPostToDto(createdPost);
+        PostResponseDTO postResponse = PostResponseDTO.toDTO(createdPost);
 
                 URI location = ServletUriComponentsBuilder
                                 .fromCurrentRequestUri().path("/{id}")
@@ -121,7 +119,7 @@ public class PostController {
             @PathVariable String id
     ) {
         Post post = service.findById(id);
-        PostResponseDTO postResponse = PostMapper.fromPostToDto(post);
+        PostResponseDTO postResponse = PostResponseDTO.toDTO(post);
 
         return ResponseEntity.ok().body(postResponse);
     }
@@ -191,7 +189,7 @@ public class PostController {
             @RequestBody PostUpdateDTO dto
     ) {
         Post post = service.updatePost(id, dto);
-        PostResponseDTO response = PostMapper.fromPostToDto(post);
+        PostResponseDTO response = PostResponseDTO.toDTO(post);
 
                 return ResponseEntity.ok().body(response);
         }

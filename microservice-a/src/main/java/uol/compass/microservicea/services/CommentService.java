@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.CommentClient;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
+import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class CommentService {
         return client.getCommentsByPostId(postId);
     }
 
-    public Comment updateCommentInPost(String postId, String commentId, CommentCreateDTO comment) {
+    public Comment updateCommentInPost(String postId, String commentId, CommentUpdateDTO comment) {
         return client.updateCommentInPost(postId, commentId, comment);
     }
 
