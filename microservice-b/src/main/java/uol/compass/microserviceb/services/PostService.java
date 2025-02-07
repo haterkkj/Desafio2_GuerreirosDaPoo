@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
+import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.repositories.PostRepository;
@@ -107,10 +108,13 @@ public class PostService {
         }
 
     }
-
+    @Transactional
     public Optional<Post> getPostWithComments(String postId) {
         Optional<Post> post = repository.findById(postId);
-        post.ifPresent(p -> p.setComments(commentRepository.findByPostId(postId)));
+        post.ifPresent(p -> {
+            List<Comment> comments = commentRepository.findByPostId(postId);
+            p.setComments(comments);
+        });
         return post;
     }
 

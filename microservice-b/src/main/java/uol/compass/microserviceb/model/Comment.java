@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Comment {
     @Id
     private String id;
-    @DBRef
+    //@DBRef
    // @JsonIgnore
     private Post post;
     @NonNull
