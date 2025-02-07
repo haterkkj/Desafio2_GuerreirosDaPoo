@@ -1,5 +1,6 @@
 package uol.compass.microservicea.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import uol.compass.microservicea.web.dto.UpdatePostDTO;
 
 import java.util.List;
 
+@Tag(name = "Posts", description = "Endpoints for managing posts.")
 @AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/posts")
