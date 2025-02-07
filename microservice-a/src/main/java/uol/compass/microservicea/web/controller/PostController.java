@@ -37,9 +37,11 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody PostCreateDTO postCreateDTO) {
+    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
         Post newPost = postService.createPost(postCreateDTO);
-        return ResponseEntity.ok().body(newPost);
+        PostResponseDTO newPostDto = PostMapper.fromPostToDto(newPost);
+
+        return ResponseEntity.ok().body(newPostDto);
     }
 
     @DeleteMapping("/{id}")
