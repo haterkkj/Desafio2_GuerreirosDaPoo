@@ -2,12 +2,13 @@ package uol.compass.microservicea.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import uol.compass.microservicea.config.FeignConfig;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 
 import java.util.List;
 
-@FeignClient(value = "comment-client", url = "localhost:8081/api/posts")
+@FeignClient(value = "comment-client", url = "localhost:8081/api/posts", configuration = FeignConfig.class)
 public interface CommentClient {
 
     @PostMapping("/{postId}/comments")
