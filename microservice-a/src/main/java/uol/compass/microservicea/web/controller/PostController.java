@@ -124,6 +124,24 @@ public class PostController {
         return ResponseEntity.created(location).body(newPostDto);
     }
 
+    @Operation(summary = "Delete a post by its ID",
+            description = "Deletes a post from the system based on the provided ID consuming Micro Service B. If the post is not found, an exception is thrown.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Post deleted successfully"
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not Found - Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class) // Temporário, alterar para ErrorMessage depois.
+                            )
+                    )
+            })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable String id ) {
         postService.deletePost(id);
