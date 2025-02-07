@@ -14,5 +14,4 @@ public class PostUpdateDTO {
     @NotBlank
     @Size(min = 3, max = 2080)
     private String body;
-
 }
