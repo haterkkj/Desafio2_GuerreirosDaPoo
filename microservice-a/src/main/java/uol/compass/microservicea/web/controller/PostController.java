@@ -20,7 +20,7 @@ import uol.compass.microservicea.web.dto.mapper.PostMapper;
 import java.net.URI;
 import java.util.List;
 
-@Tag(name = "Posts", description = "Endpoints for managing posts.")
+@Tag(name = "Posts", description = "Endpoints for managing posts consuming Micro Service B.")
 @AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/posts")
@@ -148,6 +148,37 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Update a post by ID", description = "Resource to partially update an existing post consuming Micro Service B.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be updated.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PostCreateDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Post updated successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = Object.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Object.class))
+                    )
+            })
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody UpdatePostDTO updatePostDTO) {
         Post updatedPost = postService.updatePost(id, updatePostDTO);
