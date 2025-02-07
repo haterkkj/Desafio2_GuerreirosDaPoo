@@ -12,7 +12,7 @@ public class Comment {
     @Id
     private String id;
     @DBRef
-    @JsonIgnore
+   // @JsonIgnore
     private Post post;
     @NonNull
     private String email;

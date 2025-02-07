@@ -28,6 +28,7 @@ import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Posts", description = "Endpoints for managing posts")
 @AllArgsConstructor
@@ -186,5 +187,11 @@ public class PostController {
         PostResponseDTO response = PostMapper.fromPostToDto(post);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/all/{id}")
+    public ResponseEntity<Post> getPostWithComments(@PathVariable String id) {
+        Optional<Post> post = service.getPostWithComments(id);
+        return post.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

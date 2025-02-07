@@ -7,17 +7,20 @@ import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
+import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
 import uol.compass.microserviceb.web.dto.UpdatePostDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class PostService {
     private final PostRepository repository;
     private final PostClient postClient;
+    private final CommentRepository commentRepository;
 
     public List<Post> syncData() {
         try {
@@ -103,6 +106,12 @@ public class PostService {
             throw new RuntimeException("Error updating post: " + e.getMessage());
         }
 
+    }
+
+    public Optional<Post> getPostWithComments(String postId) {
+        Optional<Post> post = repository.findById(postId);
+        post.ifPresent(p -> p.setComments(commentRepository.findByPostId(postId)));
+        return post;
     }
 
     private void updateData(Post newObj, Post obj) {
