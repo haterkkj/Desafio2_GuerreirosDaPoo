@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UpdatePostDTO {
+public class PostUpdateDTO {
     private String title;
     private String body;
 }
