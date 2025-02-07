@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,4 +15,6 @@ public class PostResponseDTO {
     private String id;
     private String title;
     private String body;
+
+    private List<CommentResponseDTO> comments;
 }
