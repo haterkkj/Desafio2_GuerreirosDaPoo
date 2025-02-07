@@ -1,4 +1,4 @@
-package uol.compass.microserviceb;
+package uol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.mongodb.core.query.Update;
 
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
