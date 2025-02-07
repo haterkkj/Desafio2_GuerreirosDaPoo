@@ -41,7 +41,7 @@ public class CommentController {
             @PathVariable String postId
     ) {
         List<Comment> comments = service.getCommentsByPostId(postId);
-        List<CommentResponseDTO> response = comments.stream().map(CommentResponseDTO::toDto).toList();
+        List<CommentResponseDTO> response = CommentMapper.fromListCommentToListDto(comments);
 
         return ResponseEntity.ok().body(response);
     }
