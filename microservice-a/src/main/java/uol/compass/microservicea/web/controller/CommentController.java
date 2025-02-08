@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,7 +75,7 @@ public class CommentController {
     }
 
     @Operation(
-            summary = "List all commento from a posts",
+            summary = "List all comments from a post",
             description = "Endpoint to retrieve all posts from the database consuming Micro Service B.",
             responses = {
                     @ApiResponse(
@@ -139,6 +138,38 @@ public class CommentController {
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(updatedComment);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/{postId}/comments/{commentId}")
+    @Operation(
+            summary = "Get a comment from a post",
+            description = "Endpoint to retrieve a posts from the database consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Comment successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CommentResponseDTO.class))
+                            ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Comment not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<CommentResponseDTO> getCommentById(
+            @PathVariable String postId,
+            @PathVariable String commentId
+    ) {
+        Comment comment = service.getCommentById(postId, commentId);
+        CommentResponseDTO response = CommentResponseDTO.toDto(comment);
 
         return ResponseEntity.ok().body(response);
     }
