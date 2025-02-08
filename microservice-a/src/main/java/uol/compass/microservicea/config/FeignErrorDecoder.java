@@ -36,18 +36,13 @@ public class FeignErrorDecoder implements ErrorDecoder {
             String path = errorNode.has("path") ? errorNode.get("path").asText() : "N/A";
             int status = response.status();
 
-            switch (HttpStatus.valueOf(status)) {
-                case NOT_FOUND:
-                    return new EntityNotFoundException(message);
-                case INTERNAL_SERVER_ERROR:
-                    return new RuntimeException(message);
-                case BAD_REQUEST:
-                    return new IllegalArgumentException(message);
-                case UNPROCESSABLE_ENTITY:
-                        return buildMethodArgumentNotValidException(errorNode, message, path, method);
-                default:
-                    return new FeignClientException(status, message, path);
-            }
+            return switch (HttpStatus.valueOf(status)) {
+                case NOT_FOUND -> new EntityNotFoundException(message);
+                case INTERNAL_SERVER_ERROR -> new RuntimeException(message);
+                case BAD_REQUEST -> new IllegalArgumentException(message);
+                case UNPROCESSABLE_ENTITY -> buildMethodArgumentNotValidException(errorNode, message, path, method);
+                default -> new FeignClientException(status, message, path);
+            };
 
         } catch (IOException e) {
             throw new RuntimeException(e);
