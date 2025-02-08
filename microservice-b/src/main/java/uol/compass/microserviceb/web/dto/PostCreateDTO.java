@@ -16,7 +16,7 @@ public class PostCreateDTO {
     @Size(min = 3, max = 80)
     private String title;
     @NotBlank
-    @Size(min = 3, max = 1080)
+    @Size(min = 3, max = 2080)
     private String body;
 
     public Post toPost() {

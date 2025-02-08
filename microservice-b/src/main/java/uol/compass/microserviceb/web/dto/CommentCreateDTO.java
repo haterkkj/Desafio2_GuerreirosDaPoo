@@ -18,7 +18,7 @@ public class CommentCreateDTO {
     private String name;
 
     @NotBlank
-    @Size(min = 3, max = 2080)
+    @Size(min = 3, max = 1080)
     private String body;
 
     public Comment toComment() {
