@@ -1,6 +1,7 @@
 package uol.compass.microservicea.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -73,6 +74,20 @@ public class CommentController {
         return ResponseEntity.created(location).body(response);
     }
 
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database consuming Micro Service B.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CommentResponseDTO.class))
+                            )
+                    )
+            }
+    )
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentResponseDTO>> getPosts(
             @PathVariable String postId
