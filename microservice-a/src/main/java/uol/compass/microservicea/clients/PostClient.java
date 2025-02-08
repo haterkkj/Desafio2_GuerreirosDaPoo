@@ -9,7 +9,7 @@ import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
 import java.util.List;
 
-@FeignClient(value = "post-client", url = "http://localhost:8081/", configuration = FeignConfig.class)
+@FeignClient(value = "post-client", url = "http://localhost:8081/api/", configuration = FeignConfig.class)
 public interface PostClient {
 
     @GetMapping("/posts")
