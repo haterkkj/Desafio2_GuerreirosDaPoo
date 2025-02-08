@@ -398,4 +398,26 @@ public class PostIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
+    @Test
+    public void deletePostById_WithValidId_ReturnNothingWithStatus204(){
+        testClient
+                .delete()
+                .uri(BASE_URI + "/1")
+                .exchange()
+                .expectStatus().isEqualTo(204);
+    }
+
+    @Test
+    public void deletePostById_WithInvalidId_ReturnErrorMessageWithStatus404(){
+        ErrorMessage responseBody = testClient
+                .delete()
+                .uri(BASE_URI + "/-1")
+                .exchange()
+                .expectStatus().isEqualTo(404)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
 }
