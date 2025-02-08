@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +73,9 @@ public class PostController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPostById(@PathVariable String id) {
+    public ResponseEntity<PostResponseDTO> getPostById(
+            @PathVariable String id
+    ) {
         Post post = postService.getPostById(id);
         PostResponseDTO postDto = PostResponseDTO.toDto(post);
 
@@ -112,7 +115,9 @@ public class PostController {
             }
     )
     @PostMapping
-    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateDTO postCreateDTO) {
+    public ResponseEntity<PostResponseDTO> createPost(
+            @Valid @RequestBody PostCreateDTO postCreateDTO
+    ) {
         Post newPost = postService.createPost(postCreateDTO);
         PostResponseDTO newPostDto = PostResponseDTO.toDto(newPost);
 
@@ -143,7 +148,9 @@ public class PostController {
                     )
             })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable String id ) {
+    public ResponseEntity<Void> deletePost(
+            @PathVariable String id
+    ) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
@@ -180,7 +187,10 @@ public class PostController {
                     )
             })
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> updatePost(@PathVariable String id, @RequestBody PostUpdateDTO postUpdateDTO) {
+    public ResponseEntity<PostResponseDTO> updatePost(
+            @PathVariable String id,
+            @Valid @RequestBody PostUpdateDTO postUpdateDTO
+    ) {
         Post updatedPost = postService.updatePost(id, postUpdateDTO);
         PostResponseDTO updatedPostDto = PostResponseDTO.toDto(updatedPost);
         return ResponseEntity.ok().body(updatedPostDto);

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +62,7 @@ public class CommentController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentResponseDTO> createComment(
             @PathVariable String postId,
-            @RequestBody CommentCreateDTO comment
+            @Valid @RequestBody CommentCreateDTO comment
     ) {
         Comment createdComment = service.createCommentInPost(postId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(createdComment);
@@ -134,7 +135,7 @@ public class CommentController {
     public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable String postId,
             @PathVariable String commentId,
-            @RequestBody CommentUpdateDTO comment
+            @Valid @RequestBody CommentUpdateDTO comment
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(updatedComment);
