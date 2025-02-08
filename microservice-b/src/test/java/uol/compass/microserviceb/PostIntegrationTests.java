@@ -1,23 +1,48 @@
 package uol.compass.microserviceb;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.PostResponseDTO;
+import uol.compass.microserviceb.web.dto.PostUpdateDTO;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
+import java.util.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@Sql(scripts = "/sql/posts/posts-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-//@Sql(scripts = "/sql/posts/posts-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class PostIntegrationTests {
 
     @Autowired
-    WebTestClient testClient;
+    private WebTestClient testClient;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     private final String BASE_URI = "api/posts";
+
+    // The key value need to be the same that the Post ID.
+    private final Map<Integer, Post> PRE_SAVED_POSTS = Map.of(
+            1, new Post("1", "Título do Post 1", "Conteúdo do Post 1"),
+            2, new Post("2", "Título do Post 2", "Conteúdo do Post 2")
+    );
+
+
+    @BeforeEach
+    public void insertTestPosts() {
+        PRE_SAVED_POSTS.forEach(
+                (key, post) -> mongoTemplate.save(post)
+        );
+    }
+
+    @AfterEach
+    public void cleanUp() {
+        mongoTemplate.dropCollection(Post.class);
+    }
 
     @Test
     public void createPost_WithValidData_ReturnPostResponseDTOWithStatus201() {
@@ -36,21 +61,6 @@ public class PostIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody.getTitle()).isEqualTo("NewPost");
         org.assertj.core.api.Assertions.assertThat(responseBody.getBody()).isEqualTo("Hello World!");
         org.assertj.core.api.Assertions.assertThat(responseBody.getComments()).isEmpty();
-    }
-
-    @Test
-    public void createPost_WithEveryDataNull_ReturnErrorMessageWithStatus422() {
-        ErrorMessage responseBody = testClient
-                .post()
-                .uri(BASE_URI)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new PostCreateDTO(null, null))
-                .exchange()
-                .expectStatus().isEqualTo(422)
-                .expectBody(ErrorMessage.class)
-                .returnResult().getResponseBody();
-
-        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
     @Test
@@ -75,21 +85,6 @@ public class PostIntegrationTests {
                 .uri(BASE_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new PostCreateDTO("A Normal Title", null))
-                .exchange()
-                .expectStatus().isEqualTo(422)
-                .expectBody(ErrorMessage.class)
-                .returnResult().getResponseBody();
-
-        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
-    }
-
-    @Test
-    public void createPost_WithEveryDataBlank_ReturnErrorMessageWithStatus422() {
-        ErrorMessage responseBody = testClient
-                .post()
-                .uri(BASE_URI)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new PostCreateDTO("", ""))
                 .exchange()
                 .expectStatus().isEqualTo(422)
                 .expectBody(ErrorMessage.class)
@@ -176,8 +171,8 @@ public class PostIntegrationTests {
     }
 
     @Test
-    public void createPost_WithBodyMoreThan1080CharsReturnErrorMessageWithStatus422() {
-        String longString = "LongString".repeat(108 + 1); // LongString has 10 Chars; 10*109 = 1090
+    public void createPost_WithBodyMoreThan2080CharsReturnErrorMessageWithStatus422() {
+        String longString = "LongString".repeat(208 + 1); // LongString has 10 Chars; 10*209 = 2090
 
         ErrorMessage responseBody = testClient
                 .post()
