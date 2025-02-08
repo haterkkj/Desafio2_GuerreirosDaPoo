@@ -116,7 +116,7 @@ public class PostController {
     )
     @PostMapping
     public ResponseEntity<PostResponseDTO> createPost(
-            @Valid @RequestBody PostCreateDTO postCreateDTO
+            @RequestBody PostCreateDTO postCreateDTO
     ) {
         Post newPost = postService.createPost(postCreateDTO);
         PostResponseDTO newPostDto = PostResponseDTO.toDto(newPost);
@@ -189,7 +189,7 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDTO> updatePost(
             @PathVariable String id,
-            @Valid @RequestBody PostUpdateDTO postUpdateDTO
+            @RequestBody PostUpdateDTO postUpdateDTO
     ) {
         Post updatedPost = postService.updatePost(id, postUpdateDTO);
         PostResponseDTO updatedPostDto = PostResponseDTO.toDto(updatedPost);

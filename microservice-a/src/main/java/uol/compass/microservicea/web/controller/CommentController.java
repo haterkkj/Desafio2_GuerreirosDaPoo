@@ -62,7 +62,7 @@ public class CommentController {
     @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentResponseDTO> createComment(
             @PathVariable String postId,
-            @Valid @RequestBody CommentCreateDTO comment
+            @RequestBody CommentCreateDTO comment
     ) {
         Comment createdComment = service.createCommentInPost(postId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(createdComment);
@@ -135,7 +135,7 @@ public class CommentController {
     public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable String postId,
             @PathVariable String commentId,
-            @Valid @RequestBody CommentUpdateDTO comment
+            @RequestBody CommentUpdateDTO comment
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(updatedComment);
