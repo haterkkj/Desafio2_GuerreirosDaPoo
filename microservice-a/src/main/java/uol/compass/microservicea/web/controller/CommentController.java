@@ -98,6 +98,37 @@ public class CommentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "Update a comment by ID", description = "Resource to partially update an existing post consuming Micro Service B.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Post data to be updated.",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CommentCreateDTO.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Comment updated successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDTO.class))
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Comment not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "422",
+                            description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            })
     @PutMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable String postId,
