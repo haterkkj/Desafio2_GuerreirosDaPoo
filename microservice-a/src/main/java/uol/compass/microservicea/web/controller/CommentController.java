@@ -141,6 +141,24 @@ public class CommentController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "Delete a Comment by ID",
+            description = "Deletes a comment from the system based on the provided ID consuming Micro Service B. If the post is not found, an exception is thrown.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "204",
+                            description = "Comment deleted successfully"
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Not Found - Comment not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    )
+            })
     @DeleteMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable String postId,
