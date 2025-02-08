@@ -2,11 +2,15 @@ package uol.compass.microserviceb.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Post;
 
 @Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostCreateDTO {
     @NotBlank
     @Size(min = 3, max = 80)
