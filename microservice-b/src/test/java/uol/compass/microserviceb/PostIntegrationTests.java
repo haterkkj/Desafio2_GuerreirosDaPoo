@@ -187,4 +187,17 @@ public class PostIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
+    @Test
+    public void getAllPosts_ReturnListOfPostResponseDTOWithStatus200(){
+        List<PostResponseDTO> responseBody = testClient
+                .get()
+                .uri(BASE_URI)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(PostResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(PRE_SAVED_POSTS.size());
+    }
 }
