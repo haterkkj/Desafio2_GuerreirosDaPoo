@@ -234,4 +234,168 @@ public class PostIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
+    @Test
+    public void updatePostById_WithValidIdAndValidData_ReturnPostResponseDTOWithStatus200(){
+        Integer postId = 1;
+        Post postData = PRE_SAVED_POSTS.get(postId);
+
+        String newTitle = "A Normal Title";
+        String newBody = "A Normal Body";
+
+        PostResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO(newTitle, newBody))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PostResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(postData.getId());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTitle()).isEqualTo(newTitle);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getBody()).isEqualTo(newBody);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getComments()).isEmpty();
+    }
+
+    @Test
+    public void updatePostById_WithInvalidIdAndValidData_ReturnErrorMessageStatus404(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/-1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("A Normal Title", "A Normal Body"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndTitleNull_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO(null, "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndBodyNull_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("A Normal Title", null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndTitleBlank_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("", null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndBodyBlank_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("A Normal Title", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndTitleWithLessThan3Chars_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("ti", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndBodyWithLessThan3Chars_ReturnErrorMessageStatus422(){
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO("A Normal Title", "bo"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndTitleWithMoreThan80Chars_ReturnErrorMessageStatus422(){
+        String longString = "LongString".repeat(8 + 1); // LongString has 10 Chars; 10*9 = 90
+
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostUpdateDTO(longString, "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updatePostById_WithValidIdAndBodyWithMoreThan1080Chars_ReturnErrorMessageStatus422(){
+        String longString = "LongString".repeat(208 + 1); // LongString has 10 Chars; 10*209 = 2090
+
+        ErrorMessage responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostCreateDTO("A Normal Title", longString))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
 }
