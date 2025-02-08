@@ -28,7 +28,7 @@ import java.util.List;
 @Tag(name = "Posts", description = "Endpoints for managing posts")
 @AllArgsConstructor
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
         private final PostService service;
 
