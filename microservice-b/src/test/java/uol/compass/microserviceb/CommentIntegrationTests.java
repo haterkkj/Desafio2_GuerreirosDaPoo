@@ -494,4 +494,73 @@ public class CommentIntegrationTests {
         Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
         org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
     }
+
+    @Test
+    public void getAllComments_ReturnListOfCommentsResponseDTOWithStatus200(){
+        String postId = "1";
+
+        List<CommentResponseDTO> responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(PRE_SAVED_COMMENTS.size());
+    }
+
+    @Test
+    public void getCommentById_WithValidId_ReturnCommentResponseDTOWithStatus200(){
+        Integer postId = 1;
+        Integer commentId = 1;
+        Comment commentData = PRE_SAVED_COMMENTS.get(commentId);
+
+        CommentResponseDTO responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(commentData.getId());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getEmail()).isEqualTo(commentData.getEmail());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getName()).isEqualTo(commentData.getName());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getBody()).isEqualTo(commentData.getBody());
+    }
+
+    @Test
+    public void getCommentById_WithInvalidPostId_ReturnErrorMessageWithStatus404(){
+        Integer postId = -1;
+        Integer commentId = 1;
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void getCommentById_WithInvalidCommentId_ReturnErrorMessageWithStatus404(){
+        Integer postId = 1;
+        Integer commentId = -1;
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
 }
