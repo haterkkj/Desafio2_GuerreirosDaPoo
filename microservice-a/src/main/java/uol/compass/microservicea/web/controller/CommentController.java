@@ -75,7 +75,7 @@ public class CommentController {
     }
 
     @Operation(
-            summary = "List all posts",
+            summary = "List all commento from a posts",
             description = "Endpoint to retrieve all posts from the database consuming Micro Service B.",
             responses = {
                     @ApiResponse(
@@ -98,20 +98,21 @@ public class CommentController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "Update a comment by ID", description = "Resource to partially update an existing post consuming Micro Service B.",
+    @Operation(summary = "Update a comment by ID",
+            description = "Resource to partially update an existing comment consuming Micro Service B.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Post data to be updated.",
+                    description = "Comment data to be updated.",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = CommentCreateDTO.class)
+                            schema = @Schema(implementation = CommentUpdateDTO.class)
                     )
             ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
                             description = "Comment updated successfully",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDTO.class))
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class)) // Correção
                     ),
                     @ApiResponse(responseCode = "404", description = "Comment not found",
                             content = @Content(mediaType = "application/json;charset=UTF-8",
