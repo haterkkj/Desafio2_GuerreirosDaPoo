@@ -19,6 +19,7 @@ public class PostService {
     private final PostRepository repository;
     private final PostClient postClient;
 
+    @Transactional
     public List<Post> syncData() {
         try {
             List<Post> posts = postClient.getPosts().stream().map(FetchedPostDTO::toPost).toList();
@@ -84,15 +85,20 @@ public class PostService {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
         }
+
         if ((dto.getTitle() == null || dto.getTitle().isBlank()) &&
                 (dto.getBody() == null || dto.getBody().isBlank())) {
             throw new IllegalArgumentException("At least one field must be updated");
         }
-        Post post = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        Post post = repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Post not found")
+        );
+
         if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
             post.setTitle(dto.getTitle());
         }
+
         if (dto.getBody() != null && !dto.getBody().isBlank()) {
             post.setBody(dto.getBody());
         }

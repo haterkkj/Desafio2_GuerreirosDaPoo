@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Post;
 
-@Getter @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 public class PostCreateDTO {
     @NotBlank
     @Size(min = 3, max = 80)
