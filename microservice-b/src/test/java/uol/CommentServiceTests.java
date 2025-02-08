@@ -10,6 +10,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
+import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.services.CommentService;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class CommentServiceTests {
     private CommentService commentService;
     @Mock
     private CommentRepository commentRepository;
+
+    @Mock
+    private PostRepository postRepository;
 
     private Comment comment;
 
@@ -81,19 +85,31 @@ public class CommentServiceTests {
 
     @Test
     void should_Delete_Comment_ById() {
+        Post post = new Post();
+        post.setId("1");
+        Comment comment = new Comment();
+        comment.setId("123");
+        post.setComments(new ArrayList<>(List.of(comment)));
+
+        when(postRepository.findById("1")).thenReturn(Optional.of(post));
         when(commentRepository.existsById("123")).thenReturn(true);
-        doNothing().when(commentRepository).deleteById("123");
 
-        commentService.deleteById("123");
+        commentService.deleteById("1", "123");
 
+        verify(postRepository, times(1)).save(post);
         verify(commentRepository, times(1)).deleteById("123");
     }
 
     @Test
-    void should_ThrowException_When_Deleting_No_Existent_Comment() {
+    void should_ThrowException_When_Deleting_NonExistent_Comment() {
+        Post post = new Post();
+        post.setId("1");
+
         when(commentRepository.existsById("999")).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("999"));
+        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("1", "999"));
+
+        verify(postRepository, never()).save(any(Post.class));
         verify(commentRepository, never()).deleteById("999");
     }
 

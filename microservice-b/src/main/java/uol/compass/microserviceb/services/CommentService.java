@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
+import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
+import uol.compass.microserviceb.repositories.PostRepository;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public Comment save(Comment comment) {
@@ -24,17 +27,19 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public void deleteById(String id) {
-        try {
-            if(!commentRepository.existsById(id)) {
-                throw new EntityNotFoundException("Comment with ID " + id + " not found.");
-            }
-            commentRepository.deleteById(id);
-        } catch (EntityNotFoundException e) {
+    public void deleteById(String postId, String id) {
+        if (!commentRepository.existsById(id)) {
             throw new EntityNotFoundException("Comment with ID " + id + " not found.");
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected error occurred while deleting the comment.", e);
         }
+
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new EntityNotFoundException("Post with ID " + postId + " not found.")
+        );
+
+        post.getComments().removeIf(comment -> comment.getId().equals(id));
+        postRepository.save(post);
+
+        commentRepository.deleteById(id);
     }
 
     @Transactional
