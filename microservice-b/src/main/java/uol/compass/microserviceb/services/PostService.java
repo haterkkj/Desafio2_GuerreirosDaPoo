@@ -66,21 +66,6 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(Post obj) {
-        if (obj == null || obj.getId() == null) {
-            throw new IllegalArgumentException("Object or ID cannot be null");
-        }
-
-        Post newObj = findById(obj.getId());
-        updateData(newObj, obj);
-
-        try {
-            return repository.save(newObj);
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating post: " + e.getMessage());
-        }
-    }
-
     public Post updatePost(String id, PostUpdateDTO dto) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
@@ -108,12 +93,5 @@ public class PostService {
         } catch (Exception e) {
             throw new RuntimeException("Error updating post: " + e.getMessage());
         }
-
     }
-
-    private void updateData(Post newObj, Post obj) {
-        newObj.setTitle(obj.getTitle());
-        newObj.setBody(obj.getBody());
-    }
-
 }
