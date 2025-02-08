@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @RequiredArgsConstructor
+@RequiredArgsConstructor
+@Getter @Setter
 public class FeignClientException extends RuntimeException {
     private final int status;
     private final String path;
