@@ -188,9 +188,8 @@ public class CommentController {
             @Parameter(description = "ID of the comment to delete", required = true)
             @PathVariable String commentId
     ) {
-        List<Comment> commentsInPost = postService.findById(postId).getComments();
-        Comment comment = findCommentInPost(commentsInPost, commentId);
-        commentService.deleteById(commentId);
+
+        commentService.deleteById(postId, commentId);
         return ResponseEntity.noContent().build();
     }
 
