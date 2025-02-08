@@ -28,7 +28,7 @@ import java.util.List;
 @Tag(name = "Posts", description = "Endpoints for managing posts")
 @AllArgsConstructor
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
         private final PostService service;
 
@@ -186,7 +186,7 @@ public class PostController {
             @Parameter(description = "Id of the post.", required = true)
             @PathVariable String id,
             @Parameter(description = "Body with the data of the post that will be updated.", required = true)
-            @RequestBody PostUpdateDTO dto
+            @Valid @RequestBody PostUpdateDTO dto
     ) {
         Post post = service.updatePost(id, dto);
         PostResponseDTO response = PostResponseDTO.toDTO(post);
