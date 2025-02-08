@@ -200,4 +200,38 @@ public class PostIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
         org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(PRE_SAVED_POSTS.size());
     }
+
+    @Test
+    public void getPostById_WithValidId_ReturnPostResponseDTOWithStatus200(){
+        Integer postId = 1;
+        Post postData = PRE_SAVED_POSTS.get(postId);
+
+        PostResponseDTO responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/" + postId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PostResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(postData.getId());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTitle()).isEqualTo(postData.getTitle());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getBody()).isEqualTo(postData.getBody());
+        org.assertj.core.api.Assertions.assertThat(responseBody.getComments()).isEmpty();
+    }
+
+    @Test
+    public void getPostById_WithInvalidId_ReturnErrorMessageWithStatus404(){
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri(BASE_URI + "/-1")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
 }
