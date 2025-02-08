@@ -9,10 +9,9 @@ import uol.compass.microservicea.web.dto.mapper.CommentMapper;
 
 import java.util.List;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 public class PostResponseDTO {
     private String id;
     private String title;
