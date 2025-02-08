@@ -156,4 +156,342 @@ public class CommentIntegrationTests {
         Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
         org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
     }
+
+    @Test
+    public void createComment_WithEmailBlank_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithNameBlank_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithBodyBlank_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "John Doe", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithoutAt_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("thereisntanyat.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithoutTopLevelDomain_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid@email", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithTopLevelDomainWithLessThan2Chars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid@email.x", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithInvalidChar_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid!@email.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithDotAtStart_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO(".invalid@email.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithDotAtEnd_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid@email.com.", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithMoreThanOneAt_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid@@email.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithBlankChars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("invalid @email.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailDotsOnARow_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("in..valid@email.com", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithNameWithLessThan2Chars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "n", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithBodyWithLessThan3Chars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "John Doe", "bo"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithNameWithMoreThan180Chars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        String longString = "LongString".repeat(18 + 1); // LongString has 10 Chars; 10*19 = 190
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", longString, "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithBodyWithMoreThan180Chars_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        String longString = "LongString".repeat(18 + 1); // LongString has 10 Chars; 10*19 = 190
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "John Doe", longString))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
 }
