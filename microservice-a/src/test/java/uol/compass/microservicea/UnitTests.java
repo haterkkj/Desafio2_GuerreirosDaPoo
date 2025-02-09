@@ -4,17 +4,13 @@ import org.junit.jupiter.api.*;
 import org.mockito.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import uol.compass.microservicea.clients.CommentClient;
-import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.model.Comment;
-import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.CommentService;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 import uol.compass.microservicea.web.dto.CommentResponseDTO;
 import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
