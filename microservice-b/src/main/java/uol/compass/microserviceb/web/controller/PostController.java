@@ -45,22 +45,19 @@ public class PostController {
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "Post successfully created.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = PostResponseDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Bad Request - Invalid input data",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                            description = "Created - Post successfully created.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
             }
     )
     @PostMapping
@@ -76,19 +73,34 @@ public class PostController {
                                 .buildAndExpand(createdPost.getId())
                                 .toUri();
                 return ResponseEntity.created(location).body(postResponse);
-        }
+    }
 
-        @Operation(summary = "List all posts", description = "Endpoint to retrieve all posts from the database.", responses = {
-                        @ApiResponse(responseCode = "200", description = "Posts successfully retrieved.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))))
-        })
+    @Operation(
+            summary = "List all posts",
+            description = "Endpoint to retrieve all posts from the database.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Ok - Posts successfully retrieved.",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
+            }
+    )
+    @GetMapping
+    public ResponseEntity<List<PostResponseDTO>> getAll() {
+            List<Post> listPost = service.findAll();
+            List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
 
-        @GetMapping
-        public ResponseEntity<List<PostResponseDTO>> getAll() {
-                List<Post> listPost = service.findAll();
-                List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
-
-                return ResponseEntity.ok().body(listPostResponse);
-        }
+            return ResponseEntity.ok().body(listPostResponse);
+    }
 
     @Operation(
             summary = "Retrieve a post by ID",
@@ -96,20 +108,19 @@ public class PostController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Post successfully retrieved.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = PostResponseDTO.class)
-                            )
+                            description = "Ok - Post successfully retrieved.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "Post not found.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                            description = "Not found - Post not found.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    )
             }
     )
     @GetMapping("/{id}")
@@ -123,21 +134,23 @@ public class PostController {
         return ResponseEntity.ok().body(postResponse);
     }
 
-    @Operation(summary = "Delete a post by its ID", description = "Deletes a post from the system based on the provided ID. If the post is not found, an exception is thrown.",
+    @Operation(
+            summary = "Delete a post by its ID",
+            description = "Deletes a post from the system based on the provided ID. If the post is not found, an exception is thrown.",
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Post deleted successfully"
+                            description = "No content - Post deleted successfully"
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found - Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found - Post not found",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
     @DeleteMapping("/{id}")
@@ -149,34 +162,34 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Update a post by ID", description = "Resource to partially update an existing post.",
+    @Operation(
+            summary = "Update a post by ID",
+            description = "Resource to partially update an existing post.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Post data to be updated.",
                     required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = PostCreateDTO.class)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostCreateDTO.class)
                     )
             ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Post updated successfully",
+                            description = "Ok - Post updated successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "Post not found",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found - Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
@@ -189,8 +202,7 @@ public class PostController {
     ) {
         Post post = service.updatePost(id, dto);
         PostResponseDTO response = PostResponseDTO.toDTO(post);
-
-                return ResponseEntity.ok().body(response);
-        }
+        return ResponseEntity.ok().body(response);
+    }
 
 }
