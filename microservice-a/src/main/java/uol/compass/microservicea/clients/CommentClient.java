@@ -10,8 +10,6 @@ import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
 import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 
-import java.util.List;
-
 @FeignClient(value = "comment-client", url = "localhost:8081/api/posts", configuration = FeignConfig.class)
 public interface CommentClient {
 

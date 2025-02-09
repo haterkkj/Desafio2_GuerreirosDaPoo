@@ -22,7 +22,6 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.CommentCreateDTO;
 import uol.compass.microserviceb.web.dto.CommentResponseDTO;
 import uol.compass.microserviceb.web.dto.CommentUpdateDTO;
-import uol.compass.microserviceb.web.dto.mapper.CommentMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;

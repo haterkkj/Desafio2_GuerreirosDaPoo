@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,11 +19,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.*;
-import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.net.URI;
-import java.util.List;
 
 @Tag(name = "Posts", description = "Endpoints for managing posts")
 @RequiredArgsConstructor

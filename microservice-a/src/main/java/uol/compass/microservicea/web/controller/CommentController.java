@@ -1,7 +1,6 @@
 package uol.compass.microservicea.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,11 +14,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.services.CommentService;
 import uol.compass.microservicea.web.dto.*;
-import uol.compass.microservicea.web.dto.mapper.CommentMapper;
 import uol.compass.microservicea.web.exception.ErrorMessage;
 
 import java.net.URI;
-import java.util.List;
 
 @Tag(name = "Comment", description = "Endpoints for managing posts consuming Micro Service B.")
 @AllArgsConstructor

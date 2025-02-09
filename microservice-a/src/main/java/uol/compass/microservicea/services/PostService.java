@@ -2,15 +2,12 @@ package uol.compass.microservicea.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Service

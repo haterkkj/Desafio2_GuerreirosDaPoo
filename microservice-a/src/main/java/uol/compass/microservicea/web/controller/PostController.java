@@ -1,7 +1,6 @@
 package uol.compass.microservicea.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,11 +16,9 @@ import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
-import uol.compass.microservicea.web.dto.mapper.PostMapper;
 import uol.compass.microservicea.web.exception.ErrorMessage;
 
 import java.net.URI;
-import java.util.List;
 
 @Tag(name = "Posts", description = "Endpoints for managing posts consuming Micro Service B.")
 @RequiredArgsConstructor
