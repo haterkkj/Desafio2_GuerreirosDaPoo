@@ -19,6 +19,7 @@ public class PostService {
     private final PostRepository repository;
     private final PostClient postClient;
 
+    @Transactional
     public List<Post> syncData() {
         try {
             List<Post> posts = postClient.getPosts().stream().map(FetchedPostDTO::toPost).toList();
@@ -65,34 +66,24 @@ public class PostService {
     }
 
     @Transactional
-    public Post update(Post obj) {
-        if (obj == null || obj.getId() == null) {
-            throw new IllegalArgumentException("Object or ID cannot be null");
-        }
-
-        Post newObj = findById(obj.getId());
-        updateData(newObj, obj);
-
-        try {
-            return repository.save(newObj);
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating post: " + e.getMessage());
-        }
-    }
-
     public Post updatePost(String id, PostUpdateDTO dto) {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
         }
+
         if ((dto.getTitle() == null || dto.getTitle().isBlank()) &&
                 (dto.getBody() == null || dto.getBody().isBlank())) {
             throw new IllegalArgumentException("At least one field must be updated");
         }
-        Post post = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+        Post post = repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Post not found")
+        );
+
         if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
             post.setTitle(dto.getTitle());
         }
+
         if (dto.getBody() != null && !dto.getBody().isBlank()) {
             post.setBody(dto.getBody());
         }
@@ -102,12 +93,5 @@ public class PostService {
         } catch (Exception e) {
             throw new RuntimeException("Error updating post: " + e.getMessage());
         }
-
     }
-
-    private void updateData(Post newObj, Post obj) {
-        newObj.setTitle(obj.getTitle());
-        newObj.setBody(obj.getBody());
-    }
-
 }

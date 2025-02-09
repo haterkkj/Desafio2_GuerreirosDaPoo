@@ -23,6 +23,12 @@ public interface CommentClient {
             @PathVariable("postId") String postId
     );
 
+    @GetMapping("/{postId}/comments/{commentId}")
+    Comment getCommentById(
+            @PathVariable("postId") String postId,
+            @PathVariable("commentId") String commentId
+    );
+
     @PutMapping("/{postId}/comments/{commentId}")
     Comment updateCommentInPost(
             @PathVariable("postId") String postId,

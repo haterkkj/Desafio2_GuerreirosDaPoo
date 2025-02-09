@@ -20,4 +20,10 @@ public class Post {
     private String body;
     @DBRef(lazy = true)
     private List<Comment> comments = new ArrayList<>();
+
+    public Post(String id, @NonNull String title, @NonNull String body) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+    }
 }

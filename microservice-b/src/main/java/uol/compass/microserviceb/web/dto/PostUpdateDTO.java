@@ -5,11 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-
-@Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostUpdateDTO {
     @NotBlank

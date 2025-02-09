@@ -2,9 +2,11 @@ package uol.compass.microserviceb.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Comment;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 public class CommentResponseDTO {

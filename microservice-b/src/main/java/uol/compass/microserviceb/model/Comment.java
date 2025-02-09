@@ -20,4 +20,12 @@ public class Comment {
     private String name;
     @NonNull
     private String body;
+
+    public Comment(String id, Post post, @NonNull String email, @NonNull String name, @NonNull String body) {
+        this.id = id;
+        this.post = post;
+        this.email = email;
+        this.name = name;
+        this.body = body;
+    }
 }
