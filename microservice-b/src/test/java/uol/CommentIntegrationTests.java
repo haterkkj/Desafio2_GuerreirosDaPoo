@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentServiceTests {
+public class CommentIntegrationTests {
     @InjectMocks
     private CommentService commentService;
     @Mock
