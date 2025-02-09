@@ -1,11 +1,14 @@
 package uol.compass.microserviceb.web.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Post;
 
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 public class FetchedPostDTO {
     private long id;
     private long userId;

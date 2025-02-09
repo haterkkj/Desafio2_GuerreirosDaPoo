@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 
-@Getter @Setter @RequiredArgsConstructor
+@RequiredArgsConstructor
+@Getter @Setter
 public class MethodArgumentNotValidException extends RuntimeException {
     private final HttpStatus status;
     private final BindingResult bindingResult;

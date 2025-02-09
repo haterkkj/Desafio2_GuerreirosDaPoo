@@ -14,6 +14,7 @@ import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.exceptions.FeignClientException;
 import uol.compass.microservicea.exceptions.MethodArgumentNotValidException;
 import uol.compass.microservicea.web.dto.CommentCreateDTO;
+import uol.compass.microservicea.web.dto.CommentUpdateDTO;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
@@ -35,18 +36,13 @@ public class FeignErrorDecoder implements ErrorDecoder {
             String path = errorNode.has("path") ? errorNode.get("path").asText() : "N/A";
             int status = response.status();
 
-            switch (HttpStatus.valueOf(status)) {
-                case NOT_FOUND:
-                    return new EntityNotFoundException(message);
-                case INTERNAL_SERVER_ERROR:
-                    return new RuntimeException(message);
-                case BAD_REQUEST:
-                    return new IllegalArgumentException(message);
-                case UNPROCESSABLE_ENTITY:
-                        return buildMethodArgumentNotValidException(errorNode, message, path, method);
-                default:
-                    return new FeignClientException(status, message, path);
-            }
+            return switch (HttpStatus.valueOf(status)) {
+                case NOT_FOUND -> new EntityNotFoundException(message);
+                case INTERNAL_SERVER_ERROR -> new RuntimeException(message);
+                case BAD_REQUEST -> new IllegalArgumentException(message);
+                case UNPROCESSABLE_ENTITY -> buildMethodArgumentNotValidException(errorNode, message, path, method);
+                default -> new FeignClientException(status, message, path);
+            };
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -72,7 +68,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
         if (method.equals("POST")) {
             if(path.contains("/comments")) {
-                bindingResult = new BeanPropertyBindingResult(new CommentCreateDTO(null, null, null), "requestBody");
+                bindingResult = new BeanPropertyBindingResult(new CommentCreateDTO(), "requestBody");
             } else {
                 bindingResult = new BeanPropertyBindingResult(new PostCreateDTO(), "requestBody");
             }
@@ -80,7 +76,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
         if (method.equals("PUT")) {
             if(path.contains("/comments")) {
-                // BindingResult reassigned to new binding result with Object CommentUpdateDTO
+                bindingResult = new BeanPropertyBindingResult(new CommentUpdateDTO(), "requestBody");
             } else {
                 bindingResult = new BeanPropertyBindingResult(new PostUpdateDTO(), "requestBody");
             }

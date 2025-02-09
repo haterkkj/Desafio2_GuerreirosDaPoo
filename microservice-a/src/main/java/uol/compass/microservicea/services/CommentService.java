@@ -22,6 +22,10 @@ public class CommentService {
         return client.getCommentsByPostId(postId);
     }
 
+    public Comment getCommentById(String postId, String commentId) {
+        return client.getCommentById(postId, commentId);
+    }
+
     public Comment updateCommentInPost(String postId, String commentId, CommentUpdateDTO comment) {
         return client.updateCommentInPost(postId, commentId, comment);
     }

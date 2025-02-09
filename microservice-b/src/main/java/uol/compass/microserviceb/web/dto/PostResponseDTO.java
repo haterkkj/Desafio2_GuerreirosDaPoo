@@ -8,10 +8,9 @@ import uol.compass.microserviceb.model.Post;
 
 import java.util.List;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 public class PostResponseDTO {
     private String id;
     private String title;

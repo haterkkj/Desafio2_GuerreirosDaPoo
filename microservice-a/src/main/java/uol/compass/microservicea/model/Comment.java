@@ -8,5 +8,4 @@ public class Comment {
     private String email;
     private String name;
     private String body;
-
 }
