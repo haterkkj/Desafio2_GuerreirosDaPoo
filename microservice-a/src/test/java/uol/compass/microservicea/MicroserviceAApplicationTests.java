@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 //@SpringBootTest Esse import quebra os testes.
-class MicroserviceAApplicationTests {
+class CommentServiceTests {
 
     @Mock
     private CommentClient commentClient;
