@@ -84,7 +84,7 @@ public class CommentIntegrationTests {
         when(commentRepository.existsById("123")).thenReturn(true);
         doNothing().when(commentRepository).deleteById("123");
 
-        commentService.deleteById("123");
+        commentService.deleteById("1","123");
 
         verify(commentRepository, times(1)).deleteById("123");
     }
@@ -93,7 +93,7 @@ public class CommentIntegrationTests {
     void should_ThrowException_When_Deleting_No_Existent_Comment() {
         when(commentRepository.existsById("999")).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("999"));
+        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("1","999"));
         verify(commentRepository, never()).deleteById("999");
     }
 
