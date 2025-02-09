@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @AllArgsConstructor
 public class CommentUpdateDTO {
     @NotBlank
     @Size(min = 2, max = 180)

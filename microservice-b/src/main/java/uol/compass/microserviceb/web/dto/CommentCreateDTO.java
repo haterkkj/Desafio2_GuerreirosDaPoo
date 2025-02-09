@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import uol.compass.microserviceb.model.Comment;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@Getter @Setter @AllArgsConstructor
 public class CommentCreateDTO {
     @NotBlank
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email must be valid")

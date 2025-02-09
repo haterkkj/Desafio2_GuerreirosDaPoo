@@ -21,7 +21,6 @@ public class Post {
     @DBRef(lazy = true)
     private List<Comment> comments = new ArrayList<>();
 
-
     public Post(String id, @NonNull String title, @NonNull String body) {
         this.id = id;
         this.title = title;
