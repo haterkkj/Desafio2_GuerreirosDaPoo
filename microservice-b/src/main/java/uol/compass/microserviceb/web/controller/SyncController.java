@@ -32,7 +32,7 @@ public class SyncController {
             description = "Endpoint to sync JsonPlaceHolder data with system data base.",
             responses = {
                     @ApiResponse(
-                            responseCode = "201",
+                            responseCode = "200",
                             description = "Successfully Synced.",
                             content = @Content(
                                     mediaType = "application/json",
