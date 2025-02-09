@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.CommentService;
@@ -156,9 +157,11 @@ public class CommentController {
     ) {
         Post relatedPost = postService.findById(postId);
         Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
-        CommentResponseDTO commentResponse = CommentResponseDTO.toDto(comment);
+        if (comment == null) {
+            throw new EntityNotFoundException("Comment with ID "+ commentId +"not found in Post with ID "+ postId +".");
+        }
+        return ResponseEntity.ok(CommentResponseDTO.toDto(comment));
 
-        return ResponseEntity.ok(commentResponse);
     }
 
     @Operation(
