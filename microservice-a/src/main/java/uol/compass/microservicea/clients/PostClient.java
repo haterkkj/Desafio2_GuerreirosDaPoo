@@ -1,6 +1,9 @@
 package uol.compass.microservicea.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.config.FeignConfig;
 import uol.compass.microservicea.model.Post;
@@ -13,7 +16,7 @@ import java.util.List;
 public interface PostClient {
 
     @GetMapping
-    List<Post> getPosts();
+    Page<Post> getPosts(@SpringQueryMap Pageable pageable);
 
     @GetMapping("/{id}")
     Post getPostById(@PathVariable("id") String id);

@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,7 +39,7 @@ public class PostController {
                             description = "Ok - Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
+                                    schema = @Schema(implementation = Page.class)
                             )
                     ),
                     @ApiResponse(
@@ -48,9 +50,9 @@ public class PostController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getPosts() {
-        List<Post> posts = postService.getPosts();
-        List<PostResponseDTO> postsDto = PostMapper.fromListPostToListDto(posts);
+    public ResponseEntity<Page<PostResponseDTO>> getPosts(Pageable pageable) {
+        Page<Post> posts = postService.getPosts(pageable);
+        Page<PostResponseDTO> postsDto = posts.map(PostResponseDTO::toDto);
         return ResponseEntity.ok().body(postsDto);
     }
 

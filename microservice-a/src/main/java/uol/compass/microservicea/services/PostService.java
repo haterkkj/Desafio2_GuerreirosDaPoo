@@ -1,6 +1,9 @@
 package uol.compass.microservicea.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.model.Post;
@@ -14,8 +17,8 @@ import java.util.List;
 public class PostService {
     private final PostClient postClient;
 
-    public List<Post> getPosts() {
-        return postClient.getPosts();
+    public Page<Post> getPosts(Pageable pageable) {
+        return postClient.getPosts(pageable);
     }
 
     public Post getPostById(String id) {
