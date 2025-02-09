@@ -124,6 +124,36 @@ public class PostIntegrationTests {
     }
 
     @Test
+    public void createPost_WithTitleWithBlankSpaces_ReturnErrorMessageWithStatus422() {
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostCreateDTO("        ", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void createPost_WithBodyWithBlankSpaces_ReturnErrorMessageWithStatus422() {
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new PostCreateDTO("A Normal Title", "          "))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
     public void createPost_WithTitleLessThan3CharsReturnErrorMessageWithStatus422() {
         ErrorMessage responseBody = testClient
                 .post()

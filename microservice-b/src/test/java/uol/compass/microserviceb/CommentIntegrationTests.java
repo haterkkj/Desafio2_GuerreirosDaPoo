@@ -43,7 +43,7 @@ public class CommentIntegrationTests {
 
 
     @BeforeEach
-    public void insertTestPosts() {
+    public void insertTestPostsAndComments() {
         Collections.addAll(PRE_SAVED_POSTS.get(1).getComments(),
                 PRE_SAVED_COMMENTS.get(1),
                 PRE_SAVED_COMMENTS.get(2)
@@ -146,6 +146,69 @@ public class CommentIntegrationTests {
                 .uri(BASE_URI + "/" + postId + "/comments")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new CommentCreateDTO("valid@email.com", "John Doe", null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithEmailWithBlankSpaces_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("          ", "John Doe", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithNameWithBlankSpaces_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "           ", "A Normal Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments);
+    }
+
+    @Test
+    public void createComment_WithBodyWithBlankSpaces_ReturnErrorMessageWithStatus422() {
+        String postId = "1";
+        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri(BASE_URI + "/" + postId + "/comments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentCreateDTO("valid@email.com", "John Doe", "        "))
                 .exchange()
                 .expectStatus().isEqualTo(422)
                 .expectBody(ErrorMessage.class)
@@ -629,6 +692,42 @@ public class CommentIntegrationTests {
                 .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new CommentUpdateDTO("Mary Doe", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithValidIdAndNameWithBlankSpaces_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("           ", "A Normal New Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithValidIdAndBodyWithBlankSpaces_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("Mary Doe", "       "))
                 .exchange()
                 .expectStatus().isEqualTo(422)
                 .expectBody(CommentResponseDTO.class)
