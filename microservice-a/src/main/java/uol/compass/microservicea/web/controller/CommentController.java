@@ -32,28 +32,22 @@ public class CommentController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Comment data to be created.",
                     required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CommentCreateDTO.class)
-                    )
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentCreateDTO.class))
             ),
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "Comment successfully created.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommentResponseDTO.class)
-                            )
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Bad Request - Invalid input data",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                            description = "Created - Comment successfully created.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
@@ -80,11 +74,21 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Posts successfully retrieved.",
+                            description = "Ok - Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
                                     array = @ArraySchema(schema = @Schema(implementation = CommentResponseDTO.class))
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not found - Post not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
     )
@@ -103,30 +107,26 @@ public class CommentController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Comment data to be updated.",
                     required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CommentUpdateDTO.class)
-                    )
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentUpdateDTO.class))
             ),
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Comment updated successfully",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class)) // Correção
+                            description = "Ok - Comment updated successfully",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "Comment not found",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
-                    ),
-                    @ApiResponse(responseCode = "400", description = "Invalid data for update",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(responseCode = "404",
+                            description = "Not found - Comment not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(
                             responseCode = "422",
                             description = "Unprocessable Entity - Invalid Arguments",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
@@ -138,7 +138,6 @@ public class CommentController {
     ) {
         Comment updatedComment = service.updateCommentInPost(postId, commentId, comment);
         CommentResponseDTO response = CommentResponseDTO.toDto(updatedComment);
-
         return ResponseEntity.ok().body(response);
     }
 
@@ -149,18 +148,18 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Comment successfully retrieved.",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommentResponseDTO.class))
-                            ),
+                            description = "Ok - Comment successfully retrieved.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
+                    ),
                     @ApiResponse(
                             responseCode = "404",
-                            description = "Comment not found",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                            description = "Not found - Comment not found",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
     )
@@ -179,17 +178,17 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Comment deleted successfully"
+                            description = "No content - Comment deleted successfully"
                     ),
-                    @ApiResponse(responseCode = "400", description = "Invalid input - Malformed ID format",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Not Found - Comment not found",
+                            content = @Content(mediaType = "application/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))
                     ),
-                    @ApiResponse(responseCode = "404", description = "Not Found - Comment not found",
-                            content = @Content(mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ErrorMessage.class)
-                            )
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             })
     @DeleteMapping("/{postId}/comments/{commentId}")

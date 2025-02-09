@@ -3,7 +3,6 @@ package uol.compass.microservicea.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.PostClient;
-import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
@@ -24,13 +23,7 @@ public class PostService {
     }
 
     public Post createPost(PostCreateDTO postCreateDTO) {
-        Post createdPost = postClient.createPost(postCreateDTO);
-
-        if (createdPost == null) {
-            throw new EntityNotFoundException("Failed to create post");
-        }
-
-        return createdPost;
+        return postClient.createPost(postCreateDTO);
     }
 
     public void deletePost(String id) {
