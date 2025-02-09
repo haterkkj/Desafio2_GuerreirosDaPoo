@@ -81,41 +81,36 @@ public class CommentIntegrationTests {
         verify(commentRepository, times(1)).findById("999");
     }
 
-    @Test
-    void should_Delete_Comment_ById() {
-        String postId = "123456";
-        String commentId = "123";
+@Test
+void should_Delete_Comment_ById() {
+    String postId = "123456";
+    String commentId = "123";
 
-        when(commentRepository.existsById(commentId)).thenReturn(true);
-        when(postRepository.findById(postId)).thenReturn(Optional.of(comment.getPost()));
+    when(commentRepository.existsById(commentId)).thenReturn(true);
+    when(postRepository.findById(postId)).thenReturn(Optional.of(comment.getPost()));
 
-        commentService.deleteById(postId, commentId);
+    commentService.deleteById(postId, commentId);
 
-        verify(commentRepository, times(1)).existsById(commentId);
-        verify(postRepository, times(1)).findById(postId);
-        verify(postRepository, times(1)).save(any(Post.class));
-        verify(commentRepository, times(1)).deleteById(commentId);
-    }
+    verify(commentRepository, times(1)).existsById(commentId);
+    verify(postRepository, times(1)).findById(postId);
+    verify(postRepository, times(1)).save(any(Post.class));
+    verify(commentRepository, times(1)).deleteById(commentId);
+}
 
-    @Test
-    void should_ThrowException_When_Deleting_No_Existent_Comment() {
-        String postId = "123456";
-        String commentId = "999";
+@Test
+void should_ThrowException_When_Deleting_No_Existent_Comment() {
+    String postId = "123456";
+    String commentId = "999";
 
-        when(commentRepository.existsById(commentId)).thenReturn(false);
+    when(commentRepository.existsById(commentId)).thenReturn(false);
 
-        Exception exception = assertThrows(RuntimeException.class, () ->
-                commentService.deleteById(postId, commentId)
-        );
+    assertThrows(EntityNotFoundException.class, () -> commentService.deleteById(postId, commentId));
 
-        assertEquals("uol.compass.microserviceb.exceptions.EntityNotFoundException: Comment with ID 999 not found.", exception.getMessage());
-
-        verify(commentRepository, times(1)).existsById(commentId);
-        verify(postRepository, never()).findById(anyString());
-        verify(postRepository, never()).save(any(Post.class));
-        verify(commentRepository, never()).deleteById(anyString());
-    }
-
+    verify(commentRepository, times(1)).existsById(commentId);
+    verify(postRepository, never()).findById(anyString());
+    verify(postRepository, never()).save(any(Post.class));
+    verify(commentRepository, never()).deleteById(anyString());
+}
     @Test
     void should_ThrowException_When_Post_Not_Found_On_Delete() {
         String postId = "999";

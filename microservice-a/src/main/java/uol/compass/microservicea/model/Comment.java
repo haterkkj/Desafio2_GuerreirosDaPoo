@@ -9,4 +9,11 @@ public class Comment {
     private String email;
     private String name;
     private String body;
+
+    public Comment(String id, String email, String name, String body) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.body = body;
+    }
 }
