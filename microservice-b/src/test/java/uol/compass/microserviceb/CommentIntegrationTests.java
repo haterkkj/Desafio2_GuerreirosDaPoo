@@ -44,14 +44,6 @@ public class CommentIntegrationTests {
 
     @BeforeEach
     public void insertTestPosts() {
-        PRE_SAVED_POSTS.forEach(
-                (key, post) -> mongoTemplate.save(post)
-        );
-
-        PRE_SAVED_COMMENTS.forEach(
-                (key, comment) -> mongoTemplate.save(comment)
-        );
-
         Collections.addAll(PRE_SAVED_POSTS.get(1).getComments(),
                 PRE_SAVED_COMMENTS.get(1),
                 PRE_SAVED_COMMENTS.get(2)
@@ -59,6 +51,14 @@ public class CommentIntegrationTests {
 
         Collections.addAll(PRE_SAVED_POSTS.get(2).getComments(),
                 PRE_SAVED_COMMENTS.get(3)
+        );
+
+        PRE_SAVED_POSTS.forEach(
+                (key, post) -> mongoTemplate.save(post)
+        );
+
+        PRE_SAVED_COMMENTS.forEach(
+                (key, comment) -> mongoTemplate.save(comment)
         );
     }
 
@@ -70,8 +70,8 @@ public class CommentIntegrationTests {
 
     @Test
     public void createComment_WithValidData_ReturnCommentResponseDTOWithStatus201() {
-        String postId = "1";
-        Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        Integer postId = 1;
+        int oldNumberOfComments = PRE_SAVED_POSTS.get(postId).getComments().size();
 
         CommentResponseDTO responseBody = testClient
                 .post()
@@ -89,7 +89,7 @@ public class CommentIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody.getName()).isEqualTo("John Doe");
         org.assertj.core.api.Assertions.assertThat(responseBody.getBody()).isEqualTo("A Normal Body");
 
-        Integer newNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
+        Integer newNumberOfComments = mongoTemplate.findById(String.valueOf(postId), Post.class).getComments().size();
         org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldNumberOfComments + 1);
 
     }
@@ -474,9 +474,9 @@ public class CommentIntegrationTests {
     }
 
     @Test
-    public void createComment_WithBodyWithMoreThan180Chars_ReturnErrorMessageWithStatus422() {
+    public void createComment_WithBodyWithMoreThan1080Chars_ReturnErrorMessageWithStatus422() {
         String postId = "1";
-        String longString = "LongString".repeat(18 + 1); // LongString has 10 Chars; 10*19 = 190
+        String longString = "LongString".repeat(108 + 1); // LongString has 10 Chars; 10*109 = 1090
         Integer oldNumberOfComments = mongoTemplate.findById(postId, Post.class).getComments().size();
 
         ErrorMessage responseBody = testClient
@@ -497,7 +497,8 @@ public class CommentIntegrationTests {
 
     @Test
     public void getAllComments_ReturnListOfCommentsResponseDTOWithStatus200(){
-        String postId = "1";
+        Integer postId = 1;
+        Integer postCommentsSize = PRE_SAVED_POSTS.get(postId).getComments().size();
 
         List<CommentResponseDTO> responseBody = testClient
                 .get()
@@ -508,12 +509,12 @@ public class CommentIntegrationTests {
                 .returnResult().getResponseBody();
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
-        org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(PRE_SAVED_COMMENTS.size());
+        org.assertj.core.api.Assertions.assertThat(responseBody.size()).isEqualTo(postCommentsSize);
     }
 
     @Test
     public void getCommentById_WithValidId_ReturnCommentResponseDTOWithStatus200(){
-        Integer postId = 1;
+        int postId = 1;
         Integer commentId = 1;
         Comment commentData = PRE_SAVED_COMMENTS.get(commentId);
 
@@ -534,8 +535,8 @@ public class CommentIntegrationTests {
 
     @Test
     public void getCommentById_WithInvalidPostId_ReturnErrorMessageWithStatus404(){
-        Integer postId = -1;
-        Integer commentId = 1;
+        int postId = -1;
+        int commentId = 1;
 
         ErrorMessage responseBody = testClient
                 .get()
@@ -550,8 +551,8 @@ public class CommentIntegrationTests {
 
     @Test
     public void getCommentById_WithInvalidCommentId_ReturnErrorMessageWithStatus404(){
-        Integer postId = 1;
-        Integer commentId = -1;
+        int postId = 1;
+        int commentId = -1;
 
         ErrorMessage responseBody = testClient
                 .get()
@@ -563,4 +564,151 @@ public class CommentIntegrationTests {
 
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
+
+    @Test
+    public void updateCommentById_WithValidIdAndNameNull_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO(null, "A Normal New Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithValidIdAndBodyNull_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("Mary Doe", null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithValidIdAndNameBlank_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("", "A Normal New Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithValidIdAndBodyBlank_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("Mary Doe", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithNameWithLessThan2Chars_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("n", "A Normal New Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithBodyWithLessThan3Chars_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("Mary Doe", "bo"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithNameWithMoreThan180Chars_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+        String longString = "LongString".repeat(18 + 1); // LongString has 10 Chars; 10*19 = 190
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO(longString, "A Normal New Body"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void updateCommentById_WithBodyWithMoreThan1080Chars_ReturnErrorMessageWithStatus422(){
+        int postId = 1;
+        int commentId = 1;
+        String longString = "LongString".repeat(108 + 1); // LongString has 10 Chars; 10*109 = 1090
+
+        CommentResponseDTO responseBody = testClient
+                .put()
+                .uri(BASE_URI + "/" + postId + "/comments" + "/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CommentUpdateDTO("Mary Doe", longString))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(CommentResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
 }
