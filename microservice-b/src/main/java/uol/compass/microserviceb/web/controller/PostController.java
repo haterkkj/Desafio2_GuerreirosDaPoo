@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -84,7 +86,7 @@ public class PostController {
                             description = "Ok - Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
+                                    schema = @Schema(implementation = Page.class)
                             )
                     ),
                     @ApiResponse(
@@ -95,9 +97,9 @@ public class PostController {
             }
     )
     @GetMapping
-    public ResponseEntity<List<PostResponseDTO>> getAll() {
-            List<Post> listPost = service.findAll();
-            List<PostResponseDTO> listPostResponse = PostMapper.fromListPostToListDto(listPost);
+    public ResponseEntity<Page<PostResponseDTO>> getAll(Pageable pageable) {
+            Page<Post> listPost = service.findAll(pageable);
+            Page<PostResponseDTO> listPostResponse = listPost.map(PostResponseDTO::toDTO);
 
             return ResponseEntity.ok().body(listPostResponse);
     }

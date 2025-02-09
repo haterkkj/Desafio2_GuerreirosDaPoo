@@ -1,6 +1,8 @@
 package uol.compass.microserviceb.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,9 +41,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAll() {
+    public Page<Post> findAll(Pageable pageable) {
         try {
-            return repository.findAll();
+            return repository.findAll(pageable);
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving posts: " + e.getMessage());
         }
