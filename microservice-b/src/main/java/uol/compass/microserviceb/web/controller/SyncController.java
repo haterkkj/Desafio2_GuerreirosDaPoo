@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.services.PostService;
-import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.PostResponseDTO;
 import uol.compass.microserviceb.web.dto.mapper.PostMapper;
 import uol.compass.microserviceb.web.exception.ErrorMessage;
@@ -33,11 +32,16 @@ public class SyncController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Successfully Synced.",
+                            description = "Ok - Successfully Synced.",
                             content = @Content(
                                     mediaType = "application/json",
                                     array = @ArraySchema(schema = @Schema(implementation = PostResponseDTO.class))
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
     )

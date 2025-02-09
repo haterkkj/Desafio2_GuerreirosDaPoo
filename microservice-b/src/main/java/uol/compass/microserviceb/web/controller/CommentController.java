@@ -2,6 +2,7 @@ package uol.compass.microserviceb.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,13 +48,8 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "Comment successfully created",
+                            description = "Created - Comment successfully created",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Bad Request - Invalid input data",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -100,8 +96,11 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "List of comments successfully retrieved",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommentResponseDTO.class))
+                            description = "Ok - List of comments successfully retrieved",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = CommentResponseDTO.class))
+                            )
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -133,7 +132,7 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Comment retrieved successfully",
+                            description = "Ok - Comment retrieved successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))
                     ),
                     @ApiResponse(
@@ -158,10 +157,9 @@ public class CommentController {
         Post relatedPost = postService.findById(postId);
         Comment comment = findCommentInPost(relatedPost.getComments(), commentId);
         if (comment == null) {
-            throw new EntityNotFoundException("Comment with ID "+ commentId +"not found in Post with ID "+ postId +".");
+            throw new EntityNotFoundException("Comment with ID " + commentId + " not found in Post with ID " + postId + ".");
         }
         return ResponseEntity.ok(CommentResponseDTO.toDto(comment));
-
     }
 
     @Operation(
@@ -170,7 +168,7 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "204",
-                            description = "Comment deleted successfully"
+                            description = "No Content - Comment deleted successfully"
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -202,7 +200,7 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Comment updated successfully",
+                            description = "Ok - Comment updated successfully",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Comment.class))
                     ),
                     @ApiResponse(
@@ -233,6 +231,9 @@ public class CommentController {
     ) {
         List<Comment> commentsInPost = postService.findById(postId).getComments();
         Comment comment = findCommentInPost(commentsInPost, commentId);
+        if (comment == null) {
+            throw new EntityNotFoundException("Comment with ID " + commentId + " not found in Post with ID " + postId + ".");
+        }
         comment.setName(updatedComment.getName());
         comment.setBody(updatedComment.getBody());
         comment = commentService.update(comment);
