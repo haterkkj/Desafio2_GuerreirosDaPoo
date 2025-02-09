@@ -1,6 +1,8 @@
 package uol.compass.microserviceb.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
@@ -69,5 +71,9 @@ public class CommentService {
 
     public List<Comment> findByPostId(String postId) {
         return commentRepository.findByPostId(postId);
+    }
+
+    public Page<Comment> findByPostId(String postId, Pageable pageable) {
+        return commentRepository.findByPostId(postId, pageable);
     }
 }

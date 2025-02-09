@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -115,14 +117,13 @@ public class CommentController {
             }
     )
     @GetMapping(value = "/posts/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDTO>> getAllComments(
+    public ResponseEntity<Page<CommentResponseDTO>> getAllComments(
             @Parameter(description = "ID of the post whose comments should be retrieved", required = true)
-            @PathVariable String postId
+            @PathVariable String postId,
+            Pageable pageable
     ) {
-        Post relatedPost = postService.findById(postId);
-        List<Comment> commentsFromPost = relatedPost.getComments();
-        List<CommentResponseDTO> commentsFromPostDto = CommentMapper.fromListCommentToListDto(commentsFromPost);
-
+        Page<Comment> commentsFromPost = commentService.findByPostId(postId, pageable);
+        Page<CommentResponseDTO> commentsFromPostDto = commentsFromPost.map(CommentResponseDTO::toDto);
         return ResponseEntity.ok(commentsFromPostDto);
     }
 
