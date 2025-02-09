@@ -1,6 +1,9 @@
 package uol.compass.microservicea.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import uol.compass.microservicea.config.FeignConfig;
 import uol.compass.microservicea.model.Comment;
@@ -19,8 +22,9 @@ public interface CommentClient {
     );
 
     @GetMapping("/{postId}/comments")
-    List<Comment> getCommentsByPostId(
-            @PathVariable("postId") String postId
+    Page<Comment> getCommentsByPostId(
+            @PathVariable("postId") String postId,
+            @SpringQueryMap Pageable pageable
     );
 
     @GetMapping("/{postId}/comments/{commentId}")

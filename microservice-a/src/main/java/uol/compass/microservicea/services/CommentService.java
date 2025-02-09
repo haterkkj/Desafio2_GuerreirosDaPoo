@@ -1,6 +1,8 @@
 package uol.compass.microservicea.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uol.compass.microservicea.clients.CommentClient;
 import uol.compass.microservicea.model.Comment;
@@ -18,8 +20,8 @@ public class CommentService {
         return client.createCommentInPost(postId, comment);
     }
 
-    public List<Comment> getCommentsByPostId(String postId) {
-        return client.getCommentsByPostId(postId);
+    public Page<Comment> getCommentsByPostId(String postId, Pageable pageable) {
+        return client.getCommentsByPostId(postId, pageable);
     }
 
     public Comment getCommentById(String postId, String commentId) {

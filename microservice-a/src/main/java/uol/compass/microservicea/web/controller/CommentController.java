@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -77,7 +79,7 @@ public class CommentController {
                             description = "Ok - Posts successfully retrieved.",
                             content = @Content(
                                     mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(implementation = CommentResponseDTO.class))
+                                    schema = @Schema(implementation = Page.class)
                             )
                     ),
                     @ApiResponse(
@@ -93,12 +95,12 @@ public class CommentController {
             }
     )
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommentResponseDTO>> getPosts(
-            @PathVariable String postId
+    public ResponseEntity<Page<CommentResponseDTO>> getPosts(
+            @PathVariable String postId,
+            Pageable pageable
     ) {
-        List<Comment> comments = service.getCommentsByPostId(postId);
-        List<CommentResponseDTO> response = CommentMapper.fromListCommentToListDto(comments);
-
+        Page<Comment> comments = service.getCommentsByPostId(postId, pageable);
+        Page<CommentResponseDTO> response = comments.map(CommentResponseDTO::toDto);
         return ResponseEntity.ok().body(response);
     }
 
