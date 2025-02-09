@@ -13,4 +13,10 @@ public class Post {
     private String title;
     private String body;
     private List<Comment> comments = new ArrayList<>();
+
+    public Post(String id, String title, String body) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+    }
 }

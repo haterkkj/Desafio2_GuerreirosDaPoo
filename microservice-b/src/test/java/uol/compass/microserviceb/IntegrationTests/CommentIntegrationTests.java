@@ -1,4 +1,4 @@
-package uol.compass.microserviceb;
+package uol.compass.microserviceb.IntegrationTests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

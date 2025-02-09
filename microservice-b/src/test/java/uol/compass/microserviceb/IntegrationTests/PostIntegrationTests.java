@@ -1,4 +1,4 @@
-package uol.compass.microserviceb;
+package uol.compass.microserviceb.IntegrationTests;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
