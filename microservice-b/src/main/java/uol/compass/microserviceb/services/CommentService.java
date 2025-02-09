@@ -43,7 +43,7 @@ public class CommentService {
 
             commentRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
