@@ -711,4 +711,45 @@ public class CommentIntegrationTests {
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
     }
 
+    @Test
+    public void deleteCommentById_WithValidId_ReturnNothingWithStatus204(){
+        int postId = 1;
+        int oldPostCommentsSize = PRE_SAVED_POSTS.get(postId).getComments().size();
+
+        testClient
+                .delete()
+                .uri(BASE_URI + "/" + postId + "/comments/1")
+                .exchange()
+                .expectStatus().isEqualTo(204);
+
+        Integer newNumberOfComments = mongoTemplate.findById(String.valueOf(postId), Post.class).getComments().size();
+        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldPostCommentsSize - 1);
+    }
+
+    @Test
+    public void deleteCommentById_WithInvalidPostId_ReturnErrorMessageWithStatus404(){
+        ErrorMessage responseBody = testClient
+                .delete()
+                .uri(BASE_URI + "/-1/comments/1")
+                .exchange()
+                .expectStatus().isEqualTo(404)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
+    @Test
+    public void deleteCommentById_WithInvalidCommentId_ReturnErrorMessageWithStatus404(){
+        ErrorMessage responseBody = testClient
+                .delete()
+                .uri(BASE_URI + "/1/comments/-1")
+                .exchange()
+                .expectStatus().isEqualTo(404)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+    }
+
 }
