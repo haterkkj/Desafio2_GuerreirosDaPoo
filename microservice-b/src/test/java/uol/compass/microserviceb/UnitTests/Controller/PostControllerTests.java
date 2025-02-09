@@ -1,4 +1,4 @@
-package uol.controller;
+package uol.compass.microserviceb.UnitTests.Controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -38,7 +38,7 @@ import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.PostUpdateDTO;
 
 @ExtendWith(MockitoExtension.class)
-public class postControllerTests {
+public class PostControllerTests {
 
     private MockMvc mockMvc;
 
