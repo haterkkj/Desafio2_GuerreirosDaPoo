@@ -10,6 +10,7 @@ import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Comment;
 import uol.compass.microserviceb.model.Post;
 import uol.compass.microserviceb.repositories.CommentRepository;
+import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.services.CommentService;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class CommentIntegrationTests {
     private CommentService commentService;
     @Mock
     private CommentRepository commentRepository;
-
+    @Mock
+    private PostRepository postRepository;
     private Comment comment;
 
     @BeforeEach
@@ -81,38 +83,84 @@ public class CommentIntegrationTests {
 
     @Test
     void should_Delete_Comment_ById() {
-        when(commentRepository.existsById("123")).thenReturn(true);
-        doNothing().when(commentRepository).deleteById("123");
+        String postId = "123456";
+        String commentId = "123";
 
-        commentService.deleteById("123");
+        when(commentRepository.existsById(commentId)).thenReturn(true);
+        when(postRepository.findById(postId)).thenReturn(Optional.of(comment.getPost()));
 
-        verify(commentRepository, times(1)).deleteById("123");
+        commentService.deleteById(postId, commentId);
+
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, times(1)).findById(postId);
+        verify(postRepository, times(1)).save(any(Post.class));
+        verify(commentRepository, times(1)).deleteById(commentId);
     }
 
     @Test
     void should_ThrowException_When_Deleting_No_Existent_Comment() {
-        when(commentRepository.existsById("999")).thenReturn(false);
+        String postId = "123456";
+        String commentId = "999";
 
-        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("999"));
-        verify(commentRepository, never()).deleteById("999");
+        when(commentRepository.existsById(commentId)).thenReturn(false);
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                commentService.deleteById(postId, commentId)
+        );
+
+        assertEquals("uol.compass.microserviceb.exceptions.EntityNotFoundException: Comment with ID 999 not found.", exception.getMessage());
+
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, never()).findById(anyString());
+        verify(postRepository, never()).save(any(Post.class));
+        verify(commentRepository, never()).deleteById(anyString());
     }
 
     @Test
+    void should_ThrowException_When_Post_Not_Found_On_Delete() {
+        String postId = "999";
+        String commentId = "123";
+
+        when(commentRepository.existsById(commentId)).thenReturn(true);
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                commentService.deleteById(postId, commentId)
+        );
+
+        assertEquals("uol.compass.microserviceb.exceptions.EntityNotFoundException: Post with ID 999 not found.", exception.getMessage());
+
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, times(1)).findById(postId);
+        verify(postRepository, never()).save(any(Post.class));
+        verify(commentRepository, never()).deleteById(anyString());
+    }
+    @Test
     void should_Update_Comment_Successfully() {
+        Comment comment = new Comment("123", null, "email@example.com", "User", "Comment Body");
+
+        when(commentRepository.existsById(comment.getId())).thenReturn(true);
         when(commentRepository.save(comment)).thenReturn(comment);
 
         Comment updatedComment = commentService.update(comment);
 
         assertNotNull(updatedComment);
         assertEquals("123", updatedComment.getId());
+        verify(commentRepository, times(1)).existsById(comment.getId());
         verify(commentRepository, times(1)).save(comment);
     }
 
     @Test
     void should_ThrowException_When_Update_Fails() {
+        Comment comment = new Comment("123", null, "email@example.com", "User", "Comment Body");
+
+        when(commentRepository.existsById(comment.getId())).thenReturn(true);
         when(commentRepository.save(comment)).thenThrow(new RuntimeException("Update error"));
 
-        assertThrows(RuntimeException.class, () -> commentService.update(comment));
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> commentService.update(comment));
+
+        assertEquals("Unexpected error occurred while updating the comment.", thrown.getMessage());
+        verify(commentRepository, times(1)).existsById(comment.getId());
         verify(commentRepository, times(1)).save(comment);
     }
 
