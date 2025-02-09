@@ -9,22 +9,22 @@ import uol.compass.microservicea.web.dto.PostUpdateDTO;
 
 import java.util.List;
 
-@FeignClient(value = "post-client", url = "http://localhost:8081/api/", configuration = FeignConfig.class)
+@FeignClient(value = "post-client", url = "http://localhost:8081/api/posts", configuration = FeignConfig.class)
 public interface PostClient {
 
-    @GetMapping("/posts")
+    @GetMapping
     List<Post> getPosts();
 
-    @GetMapping("/posts/{id}")
+    @GetMapping("/{id}")
     Post getPostById(@PathVariable("id") String id);
 
-    @PostMapping("/posts")
+    @PostMapping
     Post createPost(@RequestBody PostCreateDTO postCreateDTO);
 
-    @PutMapping("/posts/{id}")
+    @PutMapping("/{id}")
     Post updatePost(@PathVariable("id") String id, @RequestBody PostUpdateDTO postUpdateDTO);
 
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("/{id}")
     void deletePost(@PathVariable("id") String id);
 
 }

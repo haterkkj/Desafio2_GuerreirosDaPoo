@@ -49,8 +49,13 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Post findById(String id) {
-        return repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Post not found with ID: " + id));
+        try {
+            return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Post not found with ID: " + id));
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving post: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -71,14 +76,14 @@ public class PostService {
             throw new IllegalArgumentException("Post ID cannot be null or empty");
         }
 
-        if ((dto.getTitle() == null || dto.getTitle().isBlank()) &&
-                (dto.getBody() == null || dto.getBody().isBlank())) {
+        Post post = repository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Post not found with ID: " + id)
+        );
+
+        if ((dto.getTitle() == null || dto.getTitle().isBlank()) && (dto.getBody() == null || dto.getBody().isBlank())) {
             throw new IllegalArgumentException("At least one field must be updated");
         }
 
-        Post post = repository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Post not found")
-        );
 
         if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
             post.setTitle(dto.getTitle());

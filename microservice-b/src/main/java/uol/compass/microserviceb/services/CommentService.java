@@ -28,23 +28,31 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public void deleteById(String postId, String id) {
-        if (!commentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Comment with ID " + id + " not found.");
+        try {
+            if (!commentRepository.existsById(id)) {
+                throw new EntityNotFoundException("Comment with ID " + id + " not found.");
+            }
+
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new EntityNotFoundException("Post with ID " + postId + " not found.")
+            );
+
+            post.getComments().removeIf(comment -> comment.getId().equals(id));
+
+            postRepository.save(post);
+
+            commentRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new RuntimeException(e);
         }
-
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new EntityNotFoundException("Post with ID " + postId + " not found.")
-        );
-
-        post.getComments().removeIf(comment -> comment.getId().equals(id));
-        postRepository.save(post);
-
-        commentRepository.deleteById(id);
     }
 
     @Transactional
     public Comment update(Comment updatedComment) {
         try {
+            if (!commentRepository.existsById(updatedComment.getId())) {
+                throw new EntityNotFoundException("Comment with ID " + updatedComment.getId() + " not found.");
+            }
             return commentRepository.save(updatedComment);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Comment with ID " + updatedComment.getId() + " not found.");
