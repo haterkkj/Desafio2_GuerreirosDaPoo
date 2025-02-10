@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
+import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
 import uol.compass.microserviceb.web.dto.PostUpdateDTO;
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository repository;
+    private final CommentRepository commentRepository;
+
     private final PostClient postClient;
 
     @Transactional
@@ -64,6 +67,7 @@ public class PostService {
             throw new EntityNotFoundException("Post not found with ID: " + id);
         }
         try {
+            commentRepository.deleteByPostId(id);
             repository.deleteById(id);
         } catch (Exception e) {
             throw new RuntimeException("Error deleting post: " + e.getMessage());
