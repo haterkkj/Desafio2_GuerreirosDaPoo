@@ -1,5 +1,6 @@
 package uol.compass.microservicea.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import java.util.ArrayList;

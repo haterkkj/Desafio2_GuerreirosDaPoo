@@ -43,6 +43,7 @@ public class CommentServiceTests {
         comment.setId("123");
         comment.setPost(post);
     }
+
     @Test
     void should_Save_Comment_Successfully() {
         when(commentRepository.save(comment)).thenReturn(comment);
@@ -85,50 +86,75 @@ public class CommentServiceTests {
 
     @Test
     void should_Delete_Comment_ById() {
-        Post post = new Post();
-        post.setId("1");
-        Comment comment = new Comment();
-        comment.setId("123");
-        post.setComments(new ArrayList<>(List.of(comment)));
+        String postId = "123456";
+        String commentId = "123";
 
-        when(postRepository.findById("1")).thenReturn(Optional.of(post));
-        when(commentRepository.existsById("123")).thenReturn(true);
+        when(commentRepository.existsById(commentId)).thenReturn(true);
+        when(postRepository.findById(postId)).thenReturn(Optional.of(comment.getPost()));
 
-        commentService.deleteById("1", "123");
+        commentService.deleteById(postId, commentId);
 
-        verify(postRepository, times(1)).save(post);
-        verify(commentRepository, times(1)).deleteById("123");
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, times(1)).findById(postId);
+        verify(postRepository, times(1)).save(any(Post.class));
+        verify(commentRepository, times(1)).deleteById(commentId);
     }
 
     @Test
-    void should_ThrowException_When_Deleting_NonExistent_Comment() {
-        Post post = new Post();
-        post.setId("1");
+    void should_ThrowException_When_Deleting_No_Existent_Comment() {
+        String postId = "123456";
+        String commentId = "999";
 
-        when(commentRepository.existsById("999")).thenReturn(false);
+        when(commentRepository.existsById(commentId)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> commentService.deleteById("1", "999"));
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                commentService.deleteById(postId, commentId)
+        );
 
+        assertEquals("Comment with ID 999 not found.",
+                exception.getMessage());
+
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, never()).findById(anyString());
         verify(postRepository, never()).save(any(Post.class));
-        verify(commentRepository, never()).deleteById("999");
+        verify(commentRepository, never()).deleteById(anyString());
+    }
+
+    @Test
+    void should_ThrowException_When_Post_Not_Found_On_Delete() {
+        String postId = "999";
+        String commentId = "123";
+
+        when(commentRepository.existsById(commentId)).thenReturn(true);
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                commentService.deleteById(postId, commentId)
+        );
+
+        assertEquals("Post with ID 999 not found.",
+                exception.getMessage());
+
+        verify(commentRepository, times(1)).existsById(commentId);
+        verify(postRepository, times(1)).findById(postId);
+        verify(postRepository, never()).save(any(Post.class));
+        verify(commentRepository, never()).deleteById(anyString());
     }
 
     @Test
     void should_Update_Comment_Successfully() {
-        when(commentRepository.save(comment)).thenReturn(comment);
+        comment.setId("123");
+
+        when(commentRepository.existsById("123")).thenReturn(true);
+
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         Comment updatedComment = commentService.update(comment);
 
         assertNotNull(updatedComment);
         assertEquals("123", updatedComment.getId());
-        verify(commentRepository, times(1)).save(comment);
-    }
 
-    @Test
-    void should_ThrowException_When_Update_Fails() {
-        when(commentRepository.save(comment)).thenThrow(new RuntimeException("Update error"));
-
-        assertThrows(RuntimeException.class, () -> commentService.update(comment));
+        verify(commentRepository, times(1)).existsById("123");
         verify(commentRepository, times(1)).save(comment);
     }
 

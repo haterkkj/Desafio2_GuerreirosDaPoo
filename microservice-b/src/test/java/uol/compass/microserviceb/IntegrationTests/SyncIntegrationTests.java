@@ -6,14 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import uol.compass.microserviceb.model.Post;
-import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.PostResponseDTO;
 
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SyncIntegrationTests {

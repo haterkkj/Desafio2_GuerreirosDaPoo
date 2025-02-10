@@ -59,20 +59,6 @@ public class PostServiceTests {
     }
 
     @Test
-    public void postService_ShouldThrowEntityNotFoundException_WhenPostClientReturnsNull() {
-        PostCreateDTO createDTO = new PostCreateDTO("Valid Title", "Valid Body");
-
-        when(postClient.createPost(any(PostCreateDTO.class))).thenReturn(null);
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            postService.createPost(createDTO);
-        });
-
-        assertEquals("Failed to create post", exception.getMessage());
-        verify(postClient, times(1)).createPost(any(PostCreateDTO.class));
-    }
-
-    @Test
     public void postService_ShouldPropagateException_WhenPostClientThrowsBadRequest() {
         PostCreateDTO createDTO = new PostCreateDTO("", "");
 

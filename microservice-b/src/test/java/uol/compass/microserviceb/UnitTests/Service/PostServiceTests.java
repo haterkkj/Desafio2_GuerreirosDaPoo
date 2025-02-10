@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
+import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.dto.PostUpdateDTO;
@@ -38,6 +39,9 @@ public class PostServiceTests {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
 
     @Mock
     private PostClient postClient;
@@ -71,7 +75,6 @@ public class PostServiceTests {
     }
 
     @Test
-
     public void postService_ShouldNotCreate_ReturnsNullWhenPostIsNull() {
         Post savedPost = postService.save(null);
 
@@ -158,14 +161,6 @@ public class PostServiceTests {
     }
 
     @Test
-    public void postService_ShouldThrowException_WhenNoFieldsToUpdate() {
-        PostUpdateDTO dto = new PostUpdateDTO(null, null);
-
-        assertThrows(IllegalArgumentException.class, () -> postService.updatePost("1", dto));
-        verify(postRepository, times(0)).save(any(Post.class));
-    }
-
-    @Test
     public void postService_ShouldThrowException_WhenPostNotFoundById() {
         PostUpdateDTO dto = new PostUpdateDTO("New title to test", "New body to test");
 
@@ -186,7 +181,7 @@ public class PostServiceTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenDeletingNonExistentPost() {
+    void postService_shouldThrowException_WhenDeletingNonExistentPost() {
         when(postRepository.existsById("99")).thenReturn(false);
         assertThrows(EntityNotFoundException.class, () -> postService.deletePostById("99"));
     }

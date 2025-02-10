@@ -2,9 +2,6 @@ package uol.compass.microserviceb.UnitTests.Controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.MediaType;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +34,7 @@ import uol.compass.microserviceb.services.PostService;
 import uol.compass.microserviceb.web.controller.PostController;
 import uol.compass.microserviceb.web.dto.PostCreateDTO;
 import uol.compass.microserviceb.web.dto.PostUpdateDTO;
+import uol.compass.microserviceb.web.exception.ApiExceptionHandler;
 
 @ExtendWith(MockitoExtension.class)
 public class PostControllerTests {
@@ -55,13 +54,18 @@ public class PostControllerTests {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(postController)
+                .setControllerAdvice(new ApiExceptionHandler())
+                .build();
 
         mockPost = new Post();
         mockPost.setId("1");
         mockPost.setTitle("Test Post to title 1");
-        mockPost.setBody("This is a test to body 1.");
+        mockPost.setBody("This is a test.");
     }
+
 
     @Test
     void postController_ShouldCreatePost_ReturnSuccess() throws Exception {
@@ -71,7 +75,7 @@ public class PostControllerTests {
 
         when(postService.save(any(Post.class))).thenReturn(mockPost);
 
-        mockMvc.perform(post("/posts")
+        mockMvc.perform(post("/api/posts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postCreateDTO)))
                 .andExpect(status().isCreated())
@@ -80,22 +84,22 @@ public class PostControllerTests {
 
     @Test
 
-    public void postController_ShouldReturnBadRequest_ReturnCode400() throws Exception {
+    public void postController_ShouldReturnUnprocessableEntity_ReturnCode422() throws Exception {
         PostCreateDTO postCreateDTO = new PostCreateDTO();
         postCreateDTO.setTitle("");
         postCreateDTO.setBody("Test body");
 
-        mockMvc.perform(post("/posts")
+        mockMvc.perform(post("/api/posts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postCreateDTO)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
     void postController_ShouldGetAllPosts_ReturnSuccess() throws Exception {
         when(postService.findAll()).thenReturn(List.of(mockPost));
 
-        mockMvc.perform(get("/posts"))
+        mockMvc.perform(get("/api/posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].title").value("Test Post to title 1"));
@@ -105,7 +109,7 @@ public class PostControllerTests {
     public void postController_ShouldGetList_ReturnEmpty_Code200() throws Exception {
         when(postService.findAll()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/posts"))
+        mockMvc.perform(get("/api/posts"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
@@ -113,7 +117,7 @@ public class PostControllerTests {
     @Test
     void postController_ShouldReturnGetPostById_ReturnSuccess() throws Exception {
         when(postService.findById("1")).thenReturn(mockPost);
-        mockMvc.perform(get("/posts/1"))
+        mockMvc.perform(get("/api/posts/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Post to title 1"));
     }
@@ -131,7 +135,7 @@ public class PostControllerTests {
 
         when(postService.updatePost(eq("1"), any(PostUpdateDTO.class))).thenReturn(updatedPost);
 
-        mockMvc.perform(put("/posts/1")
+        mockMvc.perform(put("/api/posts/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatePostDTO)))
                 .andExpect(status().isOk())
@@ -143,16 +147,19 @@ public class PostControllerTests {
     public void postController_ShouldDeletePost_ReturnSuccess() throws Exception {
         doNothing().when(postService).deletePostById("1");
 
-        mockMvc.perform(delete("/posts/1"))
+        mockMvc.perform(delete("/api/posts/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     public void postController_ShouldDeletePost_ReturnError() throws Exception {
-        doThrow(new EntityNotFoundException("Post not found")).when(postService).deletePostById("1");
+        doThrow(new EntityNotFoundException("Post not found with ID: " + mockPost.getId()))
+                .when(postService).deletePostById(mockPost.getId());
 
-        mockMvc.perform(delete("/posts/1"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/posts/" + mockPost.getId()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Post not found with ID: " + mockPost.getId())); // Garante que o JSON de erro foi retornado corretamente
+
+        verify(postService, times(1)).deletePostById(mockPost.getId());
     }
-
 }

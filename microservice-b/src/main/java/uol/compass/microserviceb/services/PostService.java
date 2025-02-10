@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uol.compass.microserviceb.clients.PostClient;
 import uol.compass.microserviceb.exceptions.EntityNotFoundException;
 import uol.compass.microserviceb.model.Post;
+import uol.compass.microserviceb.repositories.CommentRepository;
 import uol.compass.microserviceb.repositories.PostRepository;
 import uol.compass.microserviceb.web.dto.FetchedPostDTO;
 import uol.compass.microserviceb.web.dto.PostUpdateDTO;
@@ -17,6 +18,8 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository repository;
+    private final CommentRepository commentRepository;
+
     private final PostClient postClient;
 
     @Transactional
@@ -64,6 +67,7 @@ public class PostService {
             throw new EntityNotFoundException("Post not found with ID: " + id);
         }
         try {
+            commentRepository.deleteByPostId(id);
             repository.deleteById(id);
         } catch (Exception e) {
             throw new RuntimeException("Error deleting post: " + e.getMessage());
@@ -80,18 +84,8 @@ public class PostService {
                 () -> new EntityNotFoundException("Post not found with ID: " + id)
         );
 
-        if ((dto.getTitle() == null || dto.getTitle().isBlank()) && (dto.getBody() == null || dto.getBody().isBlank())) {
-            throw new IllegalArgumentException("At least one field must be updated");
-        }
-
-
-        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
-            post.setTitle(dto.getTitle());
-        }
-
-        if (dto.getBody() != null && !dto.getBody().isBlank()) {
-            post.setBody(dto.getBody());
-        }
+        post.setTitle(dto.getTitle());
+        post.setBody(dto.getBody());
 
         try {
             return repository.save(post);

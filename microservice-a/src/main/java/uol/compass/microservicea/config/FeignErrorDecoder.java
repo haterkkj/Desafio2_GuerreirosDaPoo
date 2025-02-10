@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.exceptions.FeignClientException;
 import uol.compass.microservicea.exceptions.MethodArgumentNotValidException;
@@ -36,13 +39,25 @@ public class FeignErrorDecoder implements ErrorDecoder {
             String path = errorNode.has("path") ? errorNode.get("path").asText() : "N/A";
             int status = response.status();
 
-            return switch (HttpStatus.valueOf(status)) {
-                case NOT_FOUND -> new EntityNotFoundException(message);
-                case INTERNAL_SERVER_ERROR -> new RuntimeException(message);
-                case BAD_REQUEST -> new IllegalArgumentException(message);
-                case UNPROCESSABLE_ENTITY -> buildMethodArgumentNotValidException(errorNode, message, path, method);
-                default -> new FeignClientException(status, message, path);
-            };
+            switch (HttpStatus.valueOf(status)) {
+                case NOT_FOUND:
+                    if(message.toLowerCase().contains("no static")) {
+                        return new NoResourceFoundException(HttpMethod.valueOf(method), path);
+                    }
+                    if (message.toLowerCase().contains("not found")) {
+                        return new EntityNotFoundException(message);
+                    }
+                case INTERNAL_SERVER_ERROR:
+                    return new RuntimeException(message);
+                case BAD_REQUEST:
+                    return new IllegalArgumentException(message);
+                case UNPROCESSABLE_ENTITY:
+                    return buildMethodArgumentNotValidException(errorNode, message, path, method);
+                case METHOD_NOT_ALLOWED:
+                    return new HttpRequestMethodNotSupportedException(method);
+                default:
+                    return new FeignClientException(status, message, path);
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -1,5 +1,6 @@
 package uol.compass.microservicea.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class PostResponseDTO {
     private List<CommentResponseDTO> comments;
 
     public static PostResponseDTO toDto(Post post) {
-        List<CommentResponseDTO> comments = CommentMapper.fromListCommentToListDto(post.getComments());
+        List<CommentResponseDTO> comments = post.getComments().stream().map(CommentResponseDTO::toDto).toList();
         return new PostResponseDTO(post.getId(), post.getTitle(), post.getBody(), comments);
     }
 }
