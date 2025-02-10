@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.exceptions.FeignClientException;
@@ -40,7 +41,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
             switch (HttpStatus.valueOf(status)) {
                 case NOT_FOUND:
-                    if(message.toLowerCase().contains("no static resource")) {
+                    if(message.toLowerCase().contains("no static")) {
                         return new NoResourceFoundException(HttpMethod.valueOf(method), path);
                     }
                     if (message.toLowerCase().contains("not found")) {
@@ -52,6 +53,8 @@ public class FeignErrorDecoder implements ErrorDecoder {
                     return new IllegalArgumentException(message);
                 case UNPROCESSABLE_ENTITY:
                     return buildMethodArgumentNotValidException(errorNode, message, path, method);
+                case METHOD_NOT_ALLOWED:
+                    return new HttpRequestMethodNotSupportedException(method);
                 default:
                     return new FeignClientException(status, message, path);
             }
