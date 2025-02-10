@@ -5,28 +5,26 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import uol.compass.microservicea.clients.PostClient;
 import uol.compass.microservicea.exceptions.EntityNotFoundException;
 import uol.compass.microservicea.exceptions.MethodArgumentNotValidException;
-import uol.compass.microservicea.model.Comment;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.web.dto.PostCreateDTO;
 import uol.compass.microservicea.web.dto.PostResponseDTO;
 import uol.compass.microservicea.web.dto.PostUpdateDTO;
 import uol.compass.microservicea.web.exception.ErrorMessage;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static uol.compass.microservicea.utils.IntegrationTestUtils.PRE_SAVED_POSTS;
+import static uol.compass.microservicea.utils.IntegrationTestUtils.mockBindingResultWithErrors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostIntegrationTests {
@@ -41,17 +39,6 @@ public class PostIntegrationTests {
     private BindingResult bindingResult;
 
     private final String BASE_URI = "api/posts";
-
-    private final List<Post> PRE_SAVED_POSTS = List.of(
-            new Post("1", "Título do Post 1", "Conteúdo do Post 1"),
-            new Post("2", "Título do Post 2", "Conteúdo do Post 2")
-    );
-
-    private final List<Comment> PRE_SAVED_COMMENTS = List.of(
-            new Comment("1", PRE_SAVED_POSTS.get(0), "autor1@email.com", "Autor1", "Conteúdo do Comentário 1"),
-            new Comment("2", PRE_SAVED_POSTS.get(0), "autor2@email.com", "Autor2", "Conteúdo do Comentário 2"),
-            new Comment("3", PRE_SAVED_POSTS.get(1), "autor3@email.com", "Autor3", "Conteúdo do Comentário 3")
-    );
 
     @Test
     public void createPost_WithValidData_ReturnPostResponseDTOWithStatus201() {
@@ -77,9 +64,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithTitleNull_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -104,9 +89,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithBodyNull_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -131,9 +114,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithTitleBlank_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -158,9 +139,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithBodyBlank_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -185,9 +164,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithTitleWithBlankSpaces_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -212,9 +189,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithBodyWithBlankSpaces_ReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -239,9 +214,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithTitleLessThan3CharsReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -266,9 +239,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithBodyLessThan3CharsReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -293,9 +264,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithTitleMoreThan80CharsReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -322,9 +291,7 @@ public class PostIntegrationTests {
 
     @Test
     public void createPost_WithBodyMoreThan2080CharsReturnErrorMessageWithStatus422() {
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.createPost(any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -451,9 +418,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndTitleNull_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -478,9 +443,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndBodyNull_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -505,9 +468,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndTitleBlank_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -532,9 +493,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndBodyBlank_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -559,9 +518,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndTitleWithLessThan3Chars_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -586,9 +543,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndBodyWithLessThan3Chars_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -613,9 +568,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndTitleWithMoreThan80Chars_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
@@ -642,9 +595,7 @@ public class PostIntegrationTests {
 
     @Test
     public void updatePostById_WithValidIdAndBodyWithMoreThan1080Chars_ReturnErrorMessageStatus422(){
-        FieldError fieldError = new FieldError("myRequest", "invalidField", "Field is invalid");
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
+        mockBindingResultWithErrors(bindingResult);
 
         when(postClient.updatePost(any(), any())).thenThrow(
                 new MethodArgumentNotValidException(
