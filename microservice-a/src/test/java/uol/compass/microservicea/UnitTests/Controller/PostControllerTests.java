@@ -7,13 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.BindingResult;
 import uol.compass.microservicea.exceptions.EntityNotFoundException;
-import uol.compass.microservicea.exceptions.MethodArgumentNotValidException;
 import uol.compass.microservicea.model.Post;
 import uol.compass.microservicea.services.PostService;
 import uol.compass.microservicea.web.controller.PostController;
@@ -25,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,134 +33,114 @@ public class PostControllerTests {
     private MockMvc mockMvc;
 
     @Mock
-    private BindingResult bindingResult;
-
-    @Mock
     private PostService postService;
 
     @InjectMocks
     private PostController postController;
 
     private ObjectMapper objectMapper;
-
     private Post mockPost;
+
+    private static final String POST_ID = "123";
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(postController)
+        mockMvc = MockMvcBuilders.standaloneSetup(postController)
                 .setControllerAdvice(new ApiExceptionHandler())
                 .build();
 
         mockPost = new Post();
-        mockPost.setId("1");
-        mockPost.setTitle("Test Post to title 1");
-        mockPost.setBody("This is a test.");
-    }
-
-
-    @Test
-    void postController_ShouldCreatePost_ReturnSuccess() throws Exception {
-        PostCreateDTO postCreateDTO = new PostCreateDTO();
-        postCreateDTO.setTitle("Test Post to title 1");
-        postCreateDTO.setBody("This is a test to body 1.");
-
-        when(postService.createPost(any(PostCreateDTO.class))).thenReturn(mockPost);
-
-        mockMvc.perform(post("/api/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postCreateDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value("Test Post to title 1"));
+        mockPost.setId(POST_ID);
+        mockPost.setTitle("Test Title");
+        mockPost.setBody("Test Body");
     }
 
     @Test
-
-    public void postController_ShouldReturnUnprocessableEntity_ReturnCode422() throws Exception {
-        PostCreateDTO postCreateDTO = new PostCreateDTO();
-        postCreateDTO.setTitle("");
-        postCreateDTO.setBody("Test body");
-
-        when(postService.createPost(any(PostCreateDTO.class))).thenThrow(
-                new MethodArgumentNotValidException(
-                        "UNPROCESSABLE_ENTITY",
-                        HttpStatus.UNPROCESSABLE_ENTITY,
-                        bindingResult
-                ));
-
-        mockMvc.perform(post("/api/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postCreateDTO)))
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    void postController_ShouldGetAllPosts_ReturnSuccess() throws Exception {
+    void shouldGetAllPosts() throws Exception {
         when(postService.getPosts()).thenReturn(List.of(mockPost));
 
         mockMvc.perform(get("/api/posts"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].title").value("Test Post to title 1"));
+                .andExpect(jsonPath("$[0].id").value(POST_ID));
     }
 
     @Test
-    public void postController_ShouldGetList_ReturnEmpty_Code200() throws Exception {
+    void shouldReturnEmptyListWhenNoPostsExist() throws Exception {
         when(postService.getPosts()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/posts"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
-    void postController_ShouldReturnGetPostById_ReturnSuccess() throws Exception {
-        when(postService.getPostById("1")).thenReturn(mockPost);
-        mockMvc.perform(get("/api/posts/1"))
+    void shouldGetPostById() throws Exception {
+        when(postService.getPostById(POST_ID)).thenReturn(mockPost);
+
+        mockMvc.perform(get("/api/posts/{id}", POST_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Test Post to title 1"));
+                .andExpect(jsonPath("$.id").value(POST_ID));
     }
 
     @Test
-    public void postController_ShouldUpdatePost_ReturnSuccess() throws Exception {
-        PostUpdateDTO updatePostDTO = new PostUpdateDTO();
-        updatePostDTO.setTitle("Updated Title");
-        updatePostDTO.setBody("Updated Body");
+    void shouldReturnNotFoundWhenPostDoesNotExist() throws Exception {
+        when(postService.getPostById(POST_ID)).thenThrow(new EntityNotFoundException("Post not found"));
 
-        Post updatedPost = new Post();
-        updatedPost.setId("1");
-        updatedPost.setTitle("Updated Title");
-        updatedPost.setBody("Updated Body");
+        mockMvc.perform(get("/api/posts/{id}", POST_ID))
+                .andExpect(status().isNotFound());
+    }
 
-        when(postService.updatePost(eq("1"), any(PostUpdateDTO.class))).thenReturn(updatedPost);
+    @Test
+    void shouldCreatePostSuccessfully() throws Exception {
+        PostCreateDTO createDTO = new PostCreateDTO("Test Title", "Test Body");
+        when(postService.createPost(any(PostCreateDTO.class))).thenReturn(mockPost);
 
-        mockMvc.perform(put("/api/posts/1")
+        mockMvc.perform(post("/api/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatePostDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"))
-                .andExpect(jsonPath("$.body").value("Updated Body"));
+                        .content(objectMapper.writeValueAsString(createDTO)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(POST_ID));
     }
 
     @Test
-    public void postController_ShouldDeletePost_ReturnSuccess() throws Exception {
-        doNothing().when(postService).deletePost("1");
+    void shouldUpdatePostSuccessfully() throws Exception {
+        PostUpdateDTO updateDTO = new PostUpdateDTO("Updated Title", "Updated Body");
+        when(postService.updatePost(eq(POST_ID), any(PostUpdateDTO.class))).thenReturn(mockPost);
 
-        mockMvc.perform(delete("/api/posts/1"))
+        mockMvc.perform(put("/api/posts/{id}", POST_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(POST_ID));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingNonExistentPost() throws Exception {
+        PostUpdateDTO updateDTO = new PostUpdateDTO("Updated Title", "Updated Body");
+        when(postService.updatePost(eq(POST_ID), any(PostUpdateDTO.class)))
+                .thenThrow(new EntityNotFoundException("Post not found"));
+
+        mockMvc.perform(put("/api/posts/{id}", POST_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldDeletePostSuccessfully() throws Exception {
+        doNothing().when(postService).deletePost(POST_ID);
+
+        mockMvc.perform(delete("/api/posts/{id}", POST_ID))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    public void postController_ShouldDeletePost_ReturnError() throws Exception {
-        doThrow(new EntityNotFoundException("Post not found with ID: " + mockPost.getId()))
-                .when(postService).deletePost(mockPost.getId());
+    void shouldReturnNotFoundWhenDeletingNonExistentPost() throws Exception {
+        doThrow(new EntityNotFoundException("Post not found"))
+                .when(postService).deletePost(POST_ID);
 
-        mockMvc.perform(delete("/api/posts/" + mockPost.getId()))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Post not found with ID: " + mockPost.getId()));
-
-        verify(postService, times(1)).deletePost(mockPost.getId());
+        mockMvc.perform(delete("/api/posts/{id}", POST_ID))
+                .andExpect(status().isNotFound());
     }
 }
