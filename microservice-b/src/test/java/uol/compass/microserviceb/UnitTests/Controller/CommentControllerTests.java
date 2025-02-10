@@ -68,7 +68,7 @@ public class CommentControllerTests {
 
 
     @Test
-    void shouldCreateCommentSuccessfully() throws Exception {
+    void commentService_shouldCreateCommentSuccessfully() throws Exception {
         CommentCreateDTO createDTO = new CommentCreateDTO("email@test.com", "Test Name", "Test Body");
         when(postService.findById(POST_ID)).thenReturn(mockPost);
         when(commentService.save(any(Comment.class))).thenReturn(mockComment);
@@ -81,7 +81,7 @@ public class CommentControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenPostDoesNotExist() throws Exception {
+    void postService_shouldReturnNotFoundWhenPostDoesNotExist() throws Exception {
         when(postService.findById(POST_ID)).thenThrow(new EntityNotFoundException("Post not found"));
 
         mockMvc.perform(post("/api/posts/{postId}/comments", POST_ID)
@@ -92,7 +92,7 @@ public class CommentControllerTests {
     }
 
     @Test
-    void shouldGetAllCommentsForPost() throws Exception {
+    void postService_shouldGetPostAndAllCommentsForPost() throws Exception {
         CommentResponseDTO commentResponseDTO = CommentResponseDTO.toDto(mockComment);
 
         when(postService.findById(POST_ID)).thenReturn(mockPost);
@@ -108,7 +108,7 @@ public class CommentControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenPostHasNoComments() throws Exception {
+    void postService_shouldReturnNotFoundWhenPostHasNoComments() throws Exception {
         when(postService.findById(POST_ID)).thenReturn(mockPost);
 
         when(mockPost.getComments()).thenReturn(Collections.emptyList());
@@ -119,7 +119,7 @@ public class CommentControllerTests {
     }
 
     @Test
-    void shouldDeleteCommentSuccessfully() throws Exception {
+    void commentService_shouldDeleteCommentSuccessfully() throws Exception {
         doNothing().when(commentService).deleteById(POST_ID, COMMENT_ID);
 
         mockMvc.perform(delete("/api/posts/{postId}/comments/{commentId}", POST_ID, COMMENT_ID))
@@ -127,7 +127,7 @@ public class CommentControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenDeletingNonExistentComment() throws Exception {
+    void commentService_shouldReturnNotFoundWhenDeletingNonExistentComment() throws Exception {
         doThrow(new EntityNotFoundException("Comment not found"))
                 .when(commentService).deleteById(POST_ID, COMMENT_ID);
 
