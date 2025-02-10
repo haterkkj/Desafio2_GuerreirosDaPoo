@@ -61,12 +61,14 @@ public class CommentService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Comment findById(String id) {
         return commentRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Comment with ID " + id + " not found.")
         );
     }
 
+    @Transactional(readOnly = true)
     public List<Comment> findByPostId(String postId) {
         return commentRepository.findByPostId(postId);
     }
