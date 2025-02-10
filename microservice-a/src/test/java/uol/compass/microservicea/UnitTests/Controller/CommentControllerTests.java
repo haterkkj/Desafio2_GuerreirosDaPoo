@@ -42,7 +42,6 @@ public class CommentControllerTests {
 
     private ObjectMapper objectMapper;
     private Comment mockComment;
-    private Post mockPost;
 
     private static final String POST_ID = "123";
     private static final String COMMENT_ID = "456";
@@ -54,7 +53,7 @@ public class CommentControllerTests {
                 .setControllerAdvice(new ApiExceptionHandler())
                 .build();
 
-        mockPost = new Post();
+        Post mockPost = new Post();
         mockPost.setId(POST_ID);
 
         mockComment = new Comment();
