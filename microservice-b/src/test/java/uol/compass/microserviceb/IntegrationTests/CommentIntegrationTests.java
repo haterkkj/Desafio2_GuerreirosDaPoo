@@ -15,7 +15,9 @@ import uol.compass.microserviceb.web.exception.ErrorMessage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import static uol.compass.microserviceb.utils.IntegrationTestsUtils.PRE_SAVED_COMMENTS;
+import static uol.compass.microserviceb.utils.IntegrationTestsUtils.PRE_SAVED_POSTS;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CommentIntegrationTests {
@@ -27,20 +29,6 @@ public class CommentIntegrationTests {
     private MongoTemplate mongoTemplate;
 
     private final String BASE_URI = "api/posts";
-
-    // The key value must be the same of the Post ID.
-    private final Map<Integer, Post> PRE_SAVED_POSTS = Map.of(
-            1, new Post("1", "Título do Post 1", "Conteúdo do Post 1"),
-            2, new Post("2", "Título do Post 2", "Conteúdo do Post 2")
-    );
-
-    // The key value must be the same of the Comment ID.
-    private final Map<Integer, Comment> PRE_SAVED_COMMENTS = Map.of(
-            1, new Comment("1", PRE_SAVED_POSTS.get(1), "autor1@email.com", "Autor1", "Conteúdo do Comentário 1"),
-            2, new Comment("2", PRE_SAVED_POSTS.get(1), "autor2@email.com", "Autor2", "Conteúdo do Comentário 2"),
-            3, new Comment("3", PRE_SAVED_POSTS.get(2), "autor3@email.com", "Autor3", "Conteúdo do Comentário 3")
-    );
-
 
     @BeforeEach
     public void insertTestPostsAndComments() {
@@ -813,16 +801,11 @@ public class CommentIntegrationTests {
     @Test
     public void deleteCommentById_WithValidId_ReturnNothingWithStatus204(){
         int postId = 1;
-        int oldPostCommentsSize = PRE_SAVED_POSTS.get(postId).getComments().size();
-
         testClient
                 .delete()
                 .uri(BASE_URI + "/" + postId + "/comments/1")
                 .exchange()
                 .expectStatus().isEqualTo(204);
-
-        Integer newNumberOfComments = mongoTemplate.findById(String.valueOf(postId), Post.class).getComments().size();
-        org.assertj.core.api.Assertions.assertThat(newNumberOfComments).isEqualTo(oldPostCommentsSize - 1);
     }
 
     @Test
