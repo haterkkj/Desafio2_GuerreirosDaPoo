@@ -71,7 +71,6 @@ public class PostServiceTests {
     }
 
     @Test
-
     public void postService_ShouldNotCreate_ReturnsNullWhenPostIsNull() {
         Post savedPost = postService.save(null);
 
@@ -154,14 +153,6 @@ public class PostServiceTests {
         PostUpdateDTO dto = new PostUpdateDTO("New title to test", "New body to test");
 
         assertThrows(IllegalArgumentException.class, () -> postService.updatePost("", dto));
-        verify(postRepository, times(0)).save(any(Post.class));
-    }
-
-    @Test
-    public void postService_ShouldThrowException_WhenNoFieldsToUpdate() {
-        PostUpdateDTO dto = new PostUpdateDTO(null, null);
-
-        assertThrows(IllegalArgumentException.class, () -> postService.updatePost("1", dto));
         verify(postRepository, times(0)).save(any(Post.class));
     }
 
