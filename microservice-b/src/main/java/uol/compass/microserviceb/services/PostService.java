@@ -80,18 +80,8 @@ public class PostService {
                 () -> new EntityNotFoundException("Post not found with ID: " + id)
         );
 
-        if ((dto.getTitle() == null || dto.getTitle().isBlank()) && (dto.getBody() == null || dto.getBody().isBlank())) {
-            throw new IllegalArgumentException("At least one field must be updated");
-        }
-
-
-        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
-            post.setTitle(dto.getTitle());
-        }
-
-        if (dto.getBody() != null && !dto.getBody().isBlank()) {
-            post.setBody(dto.getBody());
-        }
+        post.setTitle(dto.getTitle());
+        post.setBody(dto.getBody());
 
         try {
             return repository.save(post);
