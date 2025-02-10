@@ -57,7 +57,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldGetAllPosts() throws Exception {
+    void postService_shouldGetAllPosts() throws Exception {
         when(postService.getPosts()).thenReturn(List.of(mockPost));
 
         mockMvc.perform(get("/api/posts"))
@@ -66,7 +66,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldReturnEmptyListWhenNoPostsExist() throws Exception {
+    void postService_shouldReturnEmptyListWhenNoPostsExist() throws Exception {
         when(postService.getPosts()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/posts"))
@@ -75,7 +75,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldGetPostById() throws Exception {
+    void postService_shouldGetPostById() throws Exception {
         when(postService.getPostById(POST_ID)).thenReturn(mockPost);
 
         mockMvc.perform(get("/api/posts/{id}", POST_ID))
@@ -84,7 +84,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenPostDoesNotExist() throws Exception {
+    void postService_shouldReturnNotFoundWhenPostDoesNotExist() throws Exception {
         when(postService.getPostById(POST_ID)).thenThrow(new EntityNotFoundException("Post not found"));
 
         mockMvc.perform(get("/api/posts/{id}", POST_ID))
@@ -92,7 +92,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldCreatePostSuccessfully() throws Exception {
+    void postService_shouldCreatePostSuccessfully() throws Exception {
         PostCreateDTO createDTO = new PostCreateDTO("Test Title", "Test Body");
         when(postService.createPost(any(PostCreateDTO.class))).thenReturn(mockPost);
 
@@ -104,7 +104,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldUpdatePostSuccessfully() throws Exception {
+    void postService_shouldUpdatePostSuccessfully() throws Exception {
         PostUpdateDTO updateDTO = new PostUpdateDTO("Updated Title", "Updated Body");
         when(postService.updatePost(eq(POST_ID), any(PostUpdateDTO.class))).thenReturn(mockPost);
 
@@ -116,7 +116,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenUpdatingNonExistentPost() throws Exception {
+    void postService_shouldReturnNotFoundWhenUpdatingNonExistentPost() throws Exception {
         PostUpdateDTO updateDTO = new PostUpdateDTO("Updated Title", "Updated Body");
         when(postService.updatePost(eq(POST_ID), any(PostUpdateDTO.class)))
                 .thenThrow(new EntityNotFoundException("Post not found"));
@@ -128,7 +128,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldDeletePostSuccessfully() throws Exception {
+    void postService_shouldDeletePostSuccessfully() throws Exception {
         doNothing().when(postService).deletePost(POST_ID);
 
         mockMvc.perform(delete("/api/posts/{id}", POST_ID))
@@ -136,7 +136,7 @@ public class PostControllerTests {
     }
 
     @Test
-    void shouldReturnNotFoundWhenDeletingNonExistentPost() throws Exception {
+    void postService_shouldReturnNotFoundWhenDeletingNonExistentPost() throws Exception {
         doThrow(new EntityNotFoundException("Post not found"))
                 .when(postService).deletePost(POST_ID);
 
